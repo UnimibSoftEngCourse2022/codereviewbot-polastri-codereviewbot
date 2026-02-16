@@ -1,0 +1,9 @@
+package it.polastri.codereviewbot.cli;
+
+public class Main {
+	
+	public static void main(String[] args) {
+		
+	    System.out.println("CodeReviewBot avviato");
+	}
+}
