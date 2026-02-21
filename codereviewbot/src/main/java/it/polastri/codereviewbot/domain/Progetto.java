@@ -1,12 +1,13 @@
 package it.polastri.codereviewbot.domain;
 
-/**
- * Rappresenta un progetto software composto da uno o più file sorgente.
- */
-
 import java.util.List; 
 import java.util.ArrayList; 
 import java.util.Collections;
+import java.util.Objects; 
+
+/**
+ * Rappresenta un progetto software composto da uno o più file sorgente.
+ */
 
 public class Progetto {
 	
@@ -14,9 +15,7 @@ public class Progetto {
 	private final List<FileSorgente> fileSorgenti = new ArrayList<>();
 	
 	public Progetto(String projectPath) {
-	    if (projectPath == null) throw new IllegalArgumentException("Project path non può essere null");
-	  
-		this.projectPath = projectPath;
+        this.projectPath = Objects.requireNonNull(projectPath, "Project path non può essere null");
 	}
 	
 	public String getProjectPath() {
@@ -28,11 +27,13 @@ public class Progetto {
 	} 
 	
 	// Aggiunge un file sorgente al progetto.
-	public void aggiungiFileSorgente(FileSorgente file) {
-		// Evita la presenza di file duplicati.
-		if (fileSorgenti.contains(file)) throw new IllegalArgumentException("File già presente nel progetto");
-        if (file == null) throw new IllegalArgumentException("FileSorgente non può essere null");
-		
-        fileSorgenti.add(file); 
-	}
+    public void aggiungiFileSorgente(FileSorgente file) {
+        Objects.requireNonNull(file, "FileSorgente non può essere null");
+        
+        boolean duplicato = fileSorgenti.stream().anyMatch(f -> f.getPath().equals(file.getPath()));
+        if (duplicato) {
+            throw new IllegalArgumentException("File già presente nel progetto: " + file.getPath());
+        }
+        fileSorgenti.add(file);
+    }
 }

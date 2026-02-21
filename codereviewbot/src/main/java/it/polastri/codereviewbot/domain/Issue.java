@@ -1,5 +1,7 @@
 package it.polastri.codereviewbot.domain;
 
+import java.util.Objects;
+
 /**
  * Rappresenta una violazione di una regola di analisi rilevata
  * durante l'analisi di un file sorgente.
@@ -14,15 +16,13 @@ public class Issue {
 	
 	// Crea una nuova issue associata a un file analizzato.
 	public Issue(FileAnalizzato fileAnalizzato,int riga, RegolaAnalisi regola, String messaggio) {
-		if (fileAnalizzato == null) throw new IllegalArgumentException("FileAnalizzato non può essere null");
-		if (regola == null) throw new IllegalArgumentException("RegolaAnalisi non può essere null");
-		if (messaggio == null) throw new IllegalArgumentException("Messaggio non può essere null");
-		if (riga <= 0) throw new IllegalArgumentException("Numero di riga non valido");
+        this.fileAnalizzato = Objects.requireNonNull(fileAnalizzato, "FileAnalizzato non può essere null");
+        this.regola = Objects.requireNonNull(regola, "RegolaAnalisi non può essere null");
+        this.messaggio = Objects.requireNonNull(messaggio, "Messaggio non può essere null");
+        if (messaggio.isBlank()) throw new IllegalArgumentException("Messaggio non può essere vuoto");
+        if (riga <= 0) throw new IllegalArgumentException("Numero di riga non valido");
 		
-		this.fileAnalizzato = fileAnalizzato;
 		this.riga = riga;
-		this.regola = regola;
-		this.messaggio = messaggio;
 	}
 	
 	public FileAnalizzato getFileAnalizzato() {

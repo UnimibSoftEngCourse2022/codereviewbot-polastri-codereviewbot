@@ -9,7 +9,7 @@ class AnalisiTest {
 	
 	// Un'analisi appena creata deve partire nello stato CREATA
     @Test
-    void constructor_shouldStartInCreata() {
+    void iniziaInStatoCreata() {
         Progetto progetto = new Progetto("/tmp/progetto");
         Analisi analisi = new Analisi("A1", progetto);
 
@@ -22,7 +22,7 @@ class AnalisiTest {
     
     // avvia() è consentito solo se lo stato è CREATA
     @Test
-    void avvia_shouldMoveToInEsecuzione_onlyIfCreata() {
+    void avviaPassaInEsecuzioneSoloSeCreata() {
         Analisi analisi = new Analisi("A1", new Progetto("/tmp/progetto"));
 
         analisi.avvia();
@@ -33,12 +33,10 @@ class AnalisiTest {
     
     // concludi() è consentito solo se l'analisi è in esecuzione
     @Test
-    void concludi_shouldWorkOnlyIfInEsecuzione_andSetRisultato() {
+    void concludiSoloInEsecuzioneEImpostaRisultato() {
         Analisi analisi = new Analisi("A1", new Progetto("/tmp/progetto"));
 
-        RisultatoAnalisi risultatoFittizio = new RisultatoAnalisi(
-                0, 0, java.util.Map.of(), java.util.List.of()
-        );
+        RisultatoAnalisi risultatoFittizio = new RisultatoAnalisi(0, 0, java.util.Map.of(), 0);
 
         // Non è possibile concludere se non è in esecuzione
         assertThrows(IllegalStateException.class, () -> analisi.concludi(risultatoFittizio));
@@ -46,20 +44,20 @@ class AnalisiTest {
         analisi.avvia();
 
         // Il risultato non può essere null
-        assertThrows(IllegalArgumentException.class, () -> analisi.concludi(null));
+        assertThrows(NullPointerException.class, () -> analisi.concludi(null));
 
         analisi.concludi(risultatoFittizio);
 
         assertEquals(StatoAnalisi.COMPLETATA, analisi.getStatoAnalisi());
         assertEquals(risultatoFittizio, analisi.getRisultato());
 
-        RisultatoAnalisi altro = new RisultatoAnalisi(0, 0, java.util.Map.of(), java.util.List.of());
+        RisultatoAnalisi altro = new RisultatoAnalisi(0, 0, java.util.Map.of(), 0);
         assertThrows(IllegalStateException.class, () -> analisi.concludi(altro));
     }
     
     // fallisci() è consentito solo se l'analisi è in esecuzione
     @Test
-    void fallisci_shouldWorkOnlyIfInEsecuzione() {
+    void fallisciSoloInEsecuzione() {
         Analisi analisi = new Analisi("A1", new Progetto("/tmp/progetto"));
 
         // non in esecuzione -> errore
@@ -77,11 +75,21 @@ class AnalisiTest {
     // registraIssue() e aggiungiFileAnalizzato() devono accettare solo valori validi e 
     // garantire l'incapsulamento delle collezioni interne
     @Test
-    void registraIssue_and_aggiungiFileAnalizzato_shouldAddElements_andRejectNull() {
+    void aggiungeElementiSoloInEsecuzioneERifiutaNull() {
         Analisi analisi = new Analisi("A1", new Progetto("/tmp/progetto"));
 
-        assertThrows(IllegalArgumentException.class, () -> analisi.registraIssue(null));
-        assertThrows(IllegalArgumentException.class, () -> analisi.aggiungiFileAnalizzato(null));
+        // è permesso aggiungere elementi solo in esecuzione
+        assertThrows(IllegalStateException.class, () -> analisi.registraIssue(new Issue(
+                new FileAnalizzato("F1", new FileSorgente("A.java", "/tmp/A.java", new Linguaggio("Java", List.of(".java")), "class A{}")),
+                1,
+                new RegolaAnalisi("R1", "desc", Severita.WARNING, Categoria.STILE),
+                "msg"
+        )));
+
+        analisi.avvia();
+        
+        assertThrows(NullPointerException.class, () -> analisi.registraIssue(null));
+        assertThrows(NullPointerException.class, () -> analisi.aggiungiFileAnalizzato(null));
 
         Linguaggio java = new Linguaggio("Java", List.of(".java"));
         FileSorgente fs = new FileSorgente("A.java", "/tmp/A.java", java, "class A{}");

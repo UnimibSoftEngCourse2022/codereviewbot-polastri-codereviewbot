@@ -1,5 +1,7 @@
 package it.polastri.codereviewbot.domain;
 
+import java.util.Objects;
+
 /**
  * Rappresenta un file sorgente appartenente a un progetto,
  * con il relativo contenuto, percorso e linguaggio di programmazione.
@@ -13,15 +15,10 @@ public class FileSorgente {
 	private final String contenuto;
 	
 	public FileSorgente(String nome, String path, Linguaggio linguaggio, String contenuto) {
-	    if (nome == null) throw new IllegalArgumentException("Nome file non può essere null");
-	    if (path == null) throw new IllegalArgumentException("Path non può essere null");
-	    if (linguaggio == null) throw new IllegalArgumentException("Linguaggio non può essere null");
-	    if (contenuto == null) throw new IllegalArgumentException("Contenuto non può essere null");
-		
-		this.nome = nome;
-		this.path = path;
-		this.linguaggio = linguaggio;
-		this.contenuto = contenuto;
+        this.nome = Objects.requireNonNull(nome, "Nome file non può essere null");
+        this.path = Objects.requireNonNull(path, "Path non può essere null");
+        this.linguaggio = Objects.requireNonNull(linguaggio, "Linguaggio non può essere null");
+        this.contenuto = Objects.requireNonNull(contenuto, "Contenuto non può essere null");
 	}
 	
 	public String getNome() {

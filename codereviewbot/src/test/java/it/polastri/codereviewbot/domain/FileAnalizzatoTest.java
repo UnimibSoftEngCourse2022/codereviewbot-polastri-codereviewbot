@@ -9,7 +9,7 @@ class FileAnalizzatoTest {
 	
 	// Un file analizzato parte in stato WAITING senza AST né messaggi di errore
     @Test
-    void constructor_shouldStartWaitingWithNoAstAndNoErrorMessage() {
+    void iniziaInWaitingSenzaAstESenzaErrore() {
         Linguaggio java = new Linguaggio("Java", List.of(".java"));
         FileSorgente fs = new FileSorgente("Main.java", "/p/Main.java", java, "class Main{}");
         FileAnalizzato fa = new FileAnalizzato("F1", fs);
@@ -22,12 +22,12 @@ class FileAnalizzatoTest {
     
     // impostaAST() imposta lo stato OK e resetta eventuali errori
     @Test
-    void impostaAST_shouldSetOkAndClearErrorMessage_andRejectNullAst() {
+    void impostaAstRendeOkEResettaErroreERifiutaNull() {
         Linguaggio java = new Linguaggio("Java", List.of(".java"));
         FileSorgente fs = new FileSorgente("Main.java", "/p/Main.java", java, "class Main{}");
         FileAnalizzato fa = new FileAnalizzato("F1", fs);
 
-        assertThrows(IllegalArgumentException.class, () -> fa.impostaAST(null));
+        assertThrows(NullPointerException.class, () -> fa.impostaAST(null));
 
         AST ast = new AST();
         fa.impostaAST(ast);
@@ -40,7 +40,7 @@ class FileAnalizzatoTest {
     
     // marcaParsingFallito() imposta lo stato ERROR e invalida l'AST
     @Test
-    void marcaParsingFallito_shouldSetErrorAndNullAstAndStoreMessage() {
+    void marcaParsingFallitoImpostaErroreEAnnullaAst() {
         Linguaggio java = new Linguaggio("Java", List.of(".java"));
         FileSorgente fs = new FileSorgente("Main.java", "/p/Main.java", java, "class Main{}");
         FileAnalizzato fa = new FileAnalizzato("F1", fs);
@@ -59,7 +59,7 @@ class FileAnalizzatoTest {
 
     // Un file è analizzabile solo se il linguaggio supporta la sua estensione
     @Test
-    void isAnalizzabile_shouldDependOnLinguaggioExtensions() {
+    void analizzabileSoloSeEstensioneSupportata() {
         Linguaggio java = new Linguaggio("Java", List.of(".java"));
 
         FileSorgente ok = new FileSorgente("A.java", "/p/A.java", java, "class A{}");

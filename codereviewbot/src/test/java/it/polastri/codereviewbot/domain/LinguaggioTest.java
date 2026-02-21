@@ -9,7 +9,7 @@ class LinguaggioTest {
 	
     // supportaEstensione() restituisce true solo per estensioni supportate
     @Test
-    void supportaEstensione_shouldReturnTrueIfPresent() {
+    void supportaEstensioneRestituisceTrueSoloSeSupportata() {
         Linguaggio java = new Linguaggio("Java", List.of(".java", ".jav"));
         assertTrue(java.supportaEstensione(".java"));
         assertFalse(java.supportaEstensione(".py"));
@@ -17,7 +17,7 @@ class LinguaggioTest {
 
     // La lista delle estensioni non deve essere modificabile dall'esterno 
     @Test
-    void getEstensioni_shouldBeUnmodifiable() {
+    void listaEstensioniNonModificabile() {
         Linguaggio java = new Linguaggio("Java", List.of(".java"));
         assertThrows(UnsupportedOperationException.class, () -> java.getEstensioni().add(".py"));
     }

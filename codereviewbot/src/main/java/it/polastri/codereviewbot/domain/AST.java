@@ -1,13 +1,14 @@
 package it.polastri.codereviewbot.domain;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
+
 /**
  * Rappresenta l'Abstract Syntax Tree (AST) di un file sorgente.
  * Contiene i nodi dell'albero rilevanti per l'analisi delle regole.
  */
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 public class AST {
 	
@@ -18,10 +19,7 @@ public class AST {
 	}
 	
     public void aggiungiNodo(NodoAST nodo) {
-        if (nodo == null) {
-            throw new IllegalArgumentException("Il nodo non può essere null");
-        }
-        nodi.add(nodo);
+        nodi.add(Objects.requireNonNull(nodo, "Il nodo non può essere null"));
     }
     
     public boolean isEmpty() {

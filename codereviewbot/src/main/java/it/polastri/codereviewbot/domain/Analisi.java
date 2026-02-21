@@ -1,15 +1,17 @@
 package it.polastri.codereviewbot.domain;
 
+import java.time.LocalDateTime; 
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
+import java.util.ArrayList; 
+import java.util.Collections; 
+
 /**
  * Rappresenta un'analisi di qualità del codice eseguita su un progetto.
  * Gestisce il ciclo di vita dell'analisi, i file analizzati, le issue rilevate
  * e il risultato finale dell'analisi.
  */
-
-import java.time.LocalDateTime; 
-import java.util.List; 
-import java.util.ArrayList; 
-import java.util.Collections; 
 
 public class Analisi {
 	
@@ -22,14 +24,11 @@ public class Analisi {
 	private RisultatoAnalisi risultato;
 	
 	public Analisi(String id, Progetto progetto) {
-	    if (id == null) throw new IllegalArgumentException("Id analisi non può essere null");
-	    if (progetto == null) throw new IllegalArgumentException("Progetto non può essere null");
-	    
-		this.id = id;
+        this.id = Objects.requireNonNull(id, "Id analisi non può essere null");
+        this.progetto = Objects.requireNonNull(progetto, "Progetto non può essere null");
+        
 		this.dataOra = LocalDateTime.now();
-		this.progetto = progetto;
 		this.statoAnalisi = StatoAnalisi.CREATA;
-		this.risultato = null; 
 	}
 
 	public String getId() {
@@ -61,28 +60,30 @@ public class Analisi {
 	}
 	
 	public void avvia() {
-		if (statoAnalisi != StatoAnalisi.CREATA) throw new IllegalStateException("Stato non valido per avviare l'analisi");
+		requireState(StatoAnalisi.CREATA, "avviare");
 		
 		this.statoAnalisi = StatoAnalisi.IN_ESECUZIONE; 
 	}
 	
 	// Avvia l'analisi portandola dallo stato CREATA a IN_ESECUZIONE.
     public void aggiungiFileAnalizzato(FileAnalizzato file) {
-    	if (file == null) throw new IllegalArgumentException("FileAnalizzato non può essere null");
-        
+        Objects.requireNonNull(file, "FileAnalizzato non può essere null");
+    	requireState(StatoAnalisi.IN_ESECUZIONE, "aggiungere file analizzati");
+    	
     	fileAnalizzati.add(file);
     }
 
     public void registraIssue(Issue issue) {
-    	if (issue == null) throw new IllegalArgumentException("Issue non può essere null");
-        
+        Objects.requireNonNull(issue, "Issue non può essere null");
+    	requireState(StatoAnalisi.IN_ESECUZIONE, "registrare issue");
+    	
     	issues.add(issue);
     }
     
     // Conclude l'analisi impostando il risultato finale e lo stato COMPLETATA.
     public void concludi(RisultatoAnalisi risultato) {
-    	if (statoAnalisi != StatoAnalisi.IN_ESECUZIONE) throw new IllegalStateException("Stato non valido per avviare l'analisi");
-    	if (risultato == null) throw new IllegalArgumentException("RisultatoAnalisi non può essere null");
+        Objects.requireNonNull(risultato, "RisultatoAnalisi non può essere null");
+    	requireState(StatoAnalisi.IN_ESECUZIONE, "concludere l'analisi");
     	
         this.risultato = risultato;
         this.statoAnalisi = StatoAnalisi.COMPLETATA;
@@ -90,8 +91,21 @@ public class Analisi {
     
     // Porta l'analisi nello stato FALLITA in caso di errore durante l'esecuzione.
     public void fallisci() {
-        if (statoAnalisi != StatoAnalisi.IN_ESECUZIONE) throw new IllegalStateException("Stato non valido per avviare l'analisi");
+    	requireState(StatoAnalisi.IN_ESECUZIONE, "marcare l'analisi come fallita");
         
         this.statoAnalisi = StatoAnalisi.FALLITA;
+    }
+    
+    private void requireState(StatoAnalisi expected, String azione) {
+        if (statoAnalisi != expected) {
+            throw new IllegalStateException("Stato non valido per " + azione + ": atteso " + expected + " ma era " + statoAnalisi);
+        }
+    }
+    
+    // Restituisce l’elenco delle issue associate a un file sorgente specifico, identificato dal suo percorso all’interno del progetto.
+    public List<Issue> getIssuesPerFilePath(String filePath) {
+        Objects.requireNonNull(filePath, "filePath non può essere null");
+
+        return issues.stream().filter(i -> filePath.equals(i.getFileAnalizzato().getFileSorgente().getPath())).collect(Collectors.toList());
     }
 }

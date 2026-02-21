@@ -1,9 +1,16 @@
 package it.polastri.codereviewbot.domain;
 
-import java.util.Map; 
+import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
 import java.util.HashMap; 
 import java.time.LocalDateTime;
 import java.util.List; 
+
+/**
+ * Rappresenta il risultato generato dopo l'avvio, esecuzione e completamento
+ * di un'Analisi. 
+ */
 
 public class RisultatoAnalisi {
 	
@@ -13,10 +20,13 @@ public class RisultatoAnalisi {
 	private final LocalDateTime generatoIl; 
 	private final int numeroIssueTotali;
 	
-	public RisultatoAnalisi(int numeroErrori, int numeroWarning, Map<String, Integer> metrichePreliminari, List<Issue> issues) {
-		this.numeroErrori = (int) issues.stream().filter(i -> i.getRegola().getSeverita() == Severita.ERROR).count();
-		this.numeroWarning = (int) issues.stream().filter(i -> i.getRegola().getSeverita() == Severita.WARNING).count();
-		this.numeroIssueTotali = issues.size();
+	public RisultatoAnalisi(int numeroErrori, int numeroWarning, Map<String, Integer> metrichePreliminari, int numeroIssueTotali) {
+        Objects.requireNonNull(metrichePreliminari, "Metriche non possono essere null");
+        if (numeroErrori < 0 || numeroWarning < 0 || numeroIssueTotali < 0) throw new IllegalArgumentException("Conteggi non validi");
+		
+		this.numeroErrori = numeroErrori; 
+		this.numeroWarning = numeroWarning; 
+		this.numeroIssueTotali = numeroIssueTotali; 
 		this.metrichePreliminari = Map.copyOf(metrichePreliminari);
 		this.generatoIl = LocalDateTime.now();
 	}
@@ -41,17 +51,40 @@ public class RisultatoAnalisi {
 		return numeroIssueTotali;
 	} 
 	
-	public static RisultatoAnalisi creaDa(List<Issue> issues, List<FileAnalizzato> fileAnalizzati) {
-		Map<String, Integer> metriche = new HashMap<>();
+	// Factory method: crea il risultato a partire da issue e file analizzati. Calcola conteggi e metriche preliminari.
+    public static RisultatoAnalisi creaDa(List<Issue> issues, List<FileAnalizzato> fileAnalizzati) {
+        Objects.requireNonNull(issues, "Issues non possono essere null");
+        Objects.requireNonNull(fileAnalizzati, "FileAnalizzati non possono essere null");
 
-	    // Metriche preliminari sensate
-	    metriche.put("fileAnalizzati: ", fileAnalizzati.size());
+        // Numero di errori, warning e issues totali (errori + warning) 
+        int errori = (int) issues.stream().filter(i -> i.getRegola().getSeverita() == Severita.ERROR).count();
+        int warning = (int) issues.stream().filter(i -> i.getRegola().getSeverita() == Severita.WARNING).count();
+        int totIssues = issues.size();
 
-	    int fileConParsingFallito = (int) fileAnalizzati.stream().filter(f -> !f.parsingRiuscito()).count();
+        // Metriche preliminari semplici
+        Map<String, Integer> metriche = new HashMap<>();
+        metriche.put("files_analizzati", fileAnalizzati.size());
 
-	    metriche.put("fileConParsingFallito", fileConParsingFallito);
+        // Numero di file in cui il parsing è andato a buon fine
+        int parsingOk = (int) fileAnalizzati.stream().filter(f -> f.getEsitoParsing() == EsitoParsing.OK).count();
 
-	    // numeroErrori e numeroWarning non servono: li ricalcola il costruttore
-	    return new RisultatoAnalisi(0,0, metriche, issues);
-	}
+        // Numero di file in cui il parsing è fallito
+        int parsingError = (int) fileAnalizzati.stream().filter(f -> f.getEsitoParsing() == EsitoParsing.ERROR).count();
+
+        metriche.put("files_parsing_ok", parsingOk);
+        metriche.put("files_parsing_error", parsingError);
+
+        metriche.put("issues_totali", totIssues);
+        metriche.put("issues_error", errori);
+        metriche.put("issues_warning", warning);
+
+        // Numero massimo di issue su un singolo file
+        Map<FileAnalizzato, Long> countPerFile = issues.stream()
+        		.collect(Collectors.groupingBy(Issue::getFileAnalizzato, Collectors.counting()));
+
+        int maxPerFile = countPerFile.values().stream().mapToInt(Long::intValue).max().orElse(0);
+        metriche.put("issues_per_file_max", maxPerFile);
+
+        return new RisultatoAnalisi(errori, warning, metriche, totIssues);
+    }
 }

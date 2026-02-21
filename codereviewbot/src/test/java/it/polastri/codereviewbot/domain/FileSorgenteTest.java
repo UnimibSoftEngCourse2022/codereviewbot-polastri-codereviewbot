@@ -10,7 +10,7 @@ class FileSorgenteTest {
 	// getEstensione() deve restituire l'estensione in minuscolo (con il punto)
 	// oppure una stringa vuota se il nome del file non ha estensione valida
     @Test
-    void getEstensione_shouldReturnLowercaseExtensionWithDot_orEmpty() {
+    void estensioneInMinuscoloOPresenteVuota() {
         Linguaggio java = new Linguaggio("Java", List.of(".java"));
         FileSorgente f1 = new FileSorgente("Main.JAVA", "/p/Main.JAVA", java, "class Main{}");
         assertEquals(".java", f1.getEstensione());

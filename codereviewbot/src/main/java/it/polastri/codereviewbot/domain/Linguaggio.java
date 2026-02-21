@@ -1,11 +1,13 @@
 package it.polastri.codereviewbot.domain;
 
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors; 
+
 /**
  * Rappresenta un linguaggio di programmazione supportato dal sistema,
  * definito dal nome e dalle estensioni dei file associate.
  */
-
-import java.util.List; 
 
 public class Linguaggio {
 	
@@ -13,11 +15,17 @@ public class Linguaggio {
 	private final List<String> estensioni; 
 	
     public Linguaggio(String nome, List<String> estensioni) {
-        if (nome == null) throw new IllegalArgumentException("Nome linguaggio non può essere null");
-        if (estensioni == null) throw new IllegalArgumentException("Lista estensioni non può essere null");
+        this.nome = Objects.requireNonNull(nome, "Nome linguaggio non può essere null");
+        Objects.requireNonNull(estensioni, "Lista estensioni non può essere null");
     	
-        this.nome = nome;
-        this.estensioni = List.copyOf(estensioni);
+        // Normalizzazione: lower-case e con '.'
+        this.estensioni = estensioni.stream()
+                .filter(Objects::nonNull)
+                .map(String::trim)
+                .filter(s -> !s.isEmpty())
+                .map(s -> s.startsWith(".") ? s.toLowerCase() : ("." + s.toLowerCase()))
+                .distinct()
+                .collect(Collectors.toUnmodifiableList());
     }
 	
 	public String getNome() {
@@ -30,9 +38,11 @@ public class Linguaggio {
 	
 	// Verifica se l'estensione indicata è supportata dal linguaggio.
     public boolean supportaEstensione(String estensione) {
-    	if (estensione == null) return false;
-    	
-    	return estensioni.contains(estensione.toLowerCase());
+        if (estensione == null || estensione.isBlank()) return false;
+        String norm = estensione.trim().toLowerCase();
+        
+        if (!norm.startsWith(".")) norm = "." + norm;
+        return estensioni.contains(norm);
     }
     
     @Override

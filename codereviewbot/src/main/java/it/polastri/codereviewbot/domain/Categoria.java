@@ -9,6 +9,7 @@ public enum Categoria {
 	NAMING,
 	COMPLESSITA,
 	SICUREZZA,
-	STILE,
+	STILE, 
+	BEST_PRACTICE,
 	BUG;
 }

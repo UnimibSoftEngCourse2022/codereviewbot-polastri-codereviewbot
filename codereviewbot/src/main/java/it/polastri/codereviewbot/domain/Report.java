@@ -1,16 +1,17 @@
 package it.polastri.codereviewbot.domain;
 
+import java.time.LocalDateTime;
+import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
+import java.util.EnumMap; 
+import java.util.List; 
+
 /**
  * Rappresenta un report generato a partire dai risultati di un'analisi.
  * Contiene una classificazione delle issue per categoria e severità
  * e un punteggio complessivo di qualità.
  */
-
-import java.time.LocalDateTime;
-import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.EnumMap; 
-import java.util.List; 
 
 public class Report {
 	
@@ -24,15 +25,13 @@ public class Report {
 	public Report(String id, Analisi analisi, ReportFormat formato, int scoreQualita,
 			Map<Categoria, Map<Severita, Integer>> classificazione) {
 	   
-		if (id == null) throw new IllegalArgumentException("Id report non può essere null");
-	    if (analisi == null) throw new IllegalArgumentException("Analisi non può essere null");
-	    if (formato == null) throw new IllegalArgumentException("Formato report non può essere null");
-	    if (classificazione == null) throw new IllegalArgumentException("Classificazione non può essere null");
-		
-		this.id = id;
-		this.analisi = analisi;
+        this.id = Objects.requireNonNull(id, "Id report non può essere null");
+        this.analisi = Objects.requireNonNull(analisi, "Analisi non può essere null");
+        this.formato = Objects.requireNonNull(formato, "Formato report non può essere null");
+        Objects.requireNonNull(classificazione, "Classificazione non può essere null");
+        if (id.isBlank()) throw new IllegalArgumentException("Id report non può essere vuoto");
+        
 		this.generatoIl = LocalDateTime.now();
-		this.formato = formato;
 		this.scoreQualita = scoreQualita;
 		this.classificazione = classificazione.entrySet().stream().collect(Collectors.toUnmodifiableMap(Map.Entry::getKey, 
 				e -> Map.copyOf(e.getValue())));
@@ -65,8 +64,8 @@ public class Report {
 	
 	// Crea un report a partire da un'analisi completata. Aggrega le issue per categoria e severità.
 	public static Report creaDa(Analisi analisi, ReportFormat formato, int scoreQualita) {
-	    if (analisi == null) throw new IllegalArgumentException("Analisi non può essere null");
-	    if (formato == null) throw new IllegalArgumentException("Formato non può essere null");
+        Objects.requireNonNull(analisi, "Analisi non può essere null");
+        Objects.requireNonNull(formato, "Formato non può essere null");
 	    if (analisi.getStatoAnalisi() != StatoAnalisi.COMPLETATA) throw new IllegalStateException("Il report può essere creato solo da un'analisi completata");
 	    
 	    // assumo che Analisi esponga le issue

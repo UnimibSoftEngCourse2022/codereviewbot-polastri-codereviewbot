@@ -1,13 +1,14 @@
 package it.polastri.codereviewbot.domain;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
+
 /**
  * Rappresenta un nodo dell'Abstract Syntax Tree (AST).
  * Ogni nodo può avere figli e può essere visitato da una regola di analisi.
  */
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 public class NodoAST {
 	
@@ -17,12 +18,10 @@ public class NodoAST {
 	private final List<NodoAST> figli = new ArrayList<>(); 
 	
 	public NodoAST(String tipoNodo, String valore, int linea) {
-	    if (tipoNodo == null) throw new IllegalArgumentException("Tipo nodo non può essere null");
-	    if (valore == null) throw new IllegalArgumentException("Valore nodo non può essere null");
+        this.tipoNodo = Objects.requireNonNull(tipoNodo, "Tipo nodo non può essere null");
+        this.valore = Objects.requireNonNull(valore, "Valore nodo non può essere null");
 	    if (linea <= 0) throw new IllegalArgumentException("Numero di linea non valido");
-	    
-		this.tipoNodo = tipoNodo; 
-		this.valore = valore;
+
 		this.linea = linea; 
 	}
 	
@@ -44,15 +43,13 @@ public class NodoAST {
 	
 	// Aggiunge un nodo figlio a questo nodo dell'AST.
     public void aggiungiFiglio(NodoAST figlio) {
-        if (figlio == null) throw new IllegalArgumentException("Il figlio non può essere null");
-
-        figli.add(figlio);
+        figli.add(Objects.requireNonNull(figlio, "Il figlio non può essere null"));
     }
     
     // Accetta una regola di analisi applicandola a questo nodo. La raccolta delle issue prodotte è responsabilità dell'analisi.
     public List<Issue> accettaRegola(RegolaAnalisi regola, FileAnalizzato fileAnalizzato) {
-        if (regola == null) throw new IllegalArgumentException("La regola non può essere null");
-        if (fileAnalizzato == null) throw new IllegalArgumentException("Il file analizzato non può essere null");
+        Objects.requireNonNull(regola, "La regola non può essere null");
+        Objects.requireNonNull(fileAnalizzato, "Il file analizzato non può essere null");
  
         return regola.applica(this, fileAnalizzato);
     }

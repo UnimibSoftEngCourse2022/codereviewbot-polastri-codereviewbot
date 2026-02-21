@@ -10,10 +10,10 @@ class NodoASTTest {
 
     // aggiungiFiglio() aggiunge correttamente un figlio e rifiuta null
     @Test
-    void aggiungiFiglio_shouldAdd_andRejectNull() {
+    void aggiungeFiglioERifiutaNull() {
         NodoAST padre = new NodoAST("Class", "A", 1);
 
-        assertThrows(IllegalArgumentException.class, () -> padre.aggiungiFiglio(null));
+        assertThrows(NullPointerException.class, () -> padre.aggiungiFiglio(null));
 
         NodoAST figlio = new NodoAST("Method", "m", 2);
         padre.aggiungiFiglio(figlio);
@@ -26,7 +26,7 @@ class NodoASTTest {
 
     // accettaRegola() con una regola base non produce issue
     @Test
-    void accettaRegola_shouldReturnEmptyListWithBaseRule() {
+    void accettaRegolaConRegolaBaseNonGeneraIssue() {
         NodoAST nodo = new NodoAST("X", "val", 10);
 
         Linguaggio java = new Linguaggio("Java", List.of(".java"));
@@ -42,7 +42,7 @@ class NodoASTTest {
 
     // accettaRegola() deve sollevare un'eccezione se regola o file analizzato sono null
     @Test
-    void accettaRegola_shouldRejectNullArguments() {
+    void lanciaEccezioneSeArgomentiNull() {
         NodoAST nodo = new NodoAST("X", "val", 10);
 
         Linguaggio java = new Linguaggio("Java", List.of(".java"));
@@ -51,7 +51,7 @@ class NodoASTTest {
 
         RegolaAnalisi regola = new RegolaAnalisi("R1", "desc", Severita.WARNING, Categoria.STILE);
 
-        assertThrows(IllegalArgumentException.class, () -> nodo.accettaRegola(null, fa));
-        assertThrows(IllegalArgumentException.class, () -> nodo.accettaRegola(regola, null));
+        assertThrows(NullPointerException.class, () -> nodo.accettaRegola(null, fa));
+        assertThrows(NullPointerException.class, () -> nodo.accettaRegola(regola, null));
     }
 }

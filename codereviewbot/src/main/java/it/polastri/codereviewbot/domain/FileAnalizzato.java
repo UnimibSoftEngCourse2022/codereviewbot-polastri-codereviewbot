@@ -1,5 +1,7 @@
 package it.polastri.codereviewbot.domain;
 
+import java.util.Objects;
+
 /**
  * Rappresenta un file sorgente sottoposto ad analisi.
  * Tiene traccia dell'esito del parsing, dell'AST generato
@@ -15,14 +17,10 @@ public class FileAnalizzato {
 	private String messaggioErroreParsing; 
 	
 	public FileAnalizzato(String id, FileSorgente fileSorgente) {
-	    if (id == null) throw new IllegalArgumentException("Id non può essere null");
-	    if (fileSorgente == null) throw new IllegalArgumentException("FileSorgente non può essere null");
+        this.id = Objects.requireNonNull(id, "Id non può essere null");
+        this.fileSorgente = Objects.requireNonNull(fileSorgente, "FileSorgente non può essere null");
 	    
-		this.id = id;
-		this.fileSorgente = fileSorgente;
 		this.esitoParsing = EsitoParsing.WAITING;
-		this.ast = null;
-	    this.messaggioErroreParsing = null;
 	}
 	
 	public EsitoParsing getEsitoParsing() {
@@ -47,7 +45,7 @@ public class FileAnalizzato {
 	
 	// Imposta lo stato di parsing a ERROR e registra il messaggio di errore. L'AST viene invalidato.
 	public void marcaParsingFallito(String messaggio) {
-	    if (messaggio == null) throw new IllegalArgumentException("Messaggio di errore non può essere null");
+        Objects.requireNonNull(messaggio, "Messaggio di errore non può essere null");
 	    
 	    this.esitoParsing = EsitoParsing.ERROR;
 	    this.ast = null;
@@ -56,7 +54,7 @@ public class FileAnalizzato {
 	
 	// Imposta l'AST generato dal parsing e marca il parsing come riuscito.
 	public void impostaAST(AST ast) {
-	    if (ast == null) throw new IllegalArgumentException("AST non può essere null");
+        Objects.requireNonNull(ast, "AST non può essere null");
 	    
 	    this.ast = ast;
 	    this.esitoParsing = EsitoParsing.OK;

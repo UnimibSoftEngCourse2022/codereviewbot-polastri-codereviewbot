@@ -1,13 +1,14 @@
 package it.polastri.codereviewbot.domain;
 
+import java.util.List;
+import java.util.Objects;
+import java.util.Collections; 
+
 /**
  * Rappresenta una regola di analisi applicabile ai nodi dell'AST.
  * Ogni regola è caratterizzata da una severità e da una categoria
  * e può produrre una o più issue se violata.
  */
-
-import java.util.List; 
-import java.util.Collections; 
 
 public class RegolaAnalisi {
 	
@@ -17,15 +18,10 @@ public class RegolaAnalisi {
 	private final Categoria categoria; 
 	
 	public RegolaAnalisi(String id, String descrizione, Severita severita, Categoria categoria) {
-	    if (id == null) throw new IllegalArgumentException("Id regola non può essere null");
-	    if (descrizione == null) throw new IllegalArgumentException("Descrizione non può essere null");
-	    if (severita == null) throw new IllegalArgumentException("Severità non può essere null");
-	    if (categoria == null) throw new IllegalArgumentException("Categoria non può essere null");
-		
-		this.id = id; 
-		this.descrizione = descrizione; 
-		this.severita = severita; 
-		this.categoria = categoria; 
+        this.id = Objects.requireNonNull(id, "Id regola non può essere null");
+        this.descrizione = Objects.requireNonNull(descrizione, "Descrizione non può essere null");
+        this.severita = Objects.requireNonNull(severita, "Severità non può essere null");
+        this.categoria = Objects.requireNonNull(categoria, "Categoria non può essere null");
 	}
 	
 	public String getId() {
@@ -57,17 +53,15 @@ public class RegolaAnalisi {
         return id;
     }
     
-    // Applica la regola a un nodo dell'AST. Se la regola è violata, produce una o più issue associate al file analizzato.
+    /**
+     * Applica la regola a un nodo dell'AST.
+     * La classe base non impone nessuna logica: restituisce lista vuota.
+     * Le regole concrete sovrascrivono questo metodo.
+     */
     public List<Issue> applica(NodoAST nodo, FileAnalizzato fileAnalizzato) {
-        if (nodo == null) throw new IllegalArgumentException("NodoAST non può essere null");
-        if (fileAnalizzato == null) throw new IllegalArgumentException("FileAnalizzato non può essere null");
-
-        if (nodo.getTipoNodo().equalsIgnoreCase(id)) {
-            Issue issue = new Issue(fileAnalizzato, nodo.getLinea(), this, "Violazione della regola " + id + " sul nodo di tipo " 
-            		+ nodo.getTipoNodo());
-            return List.of(issue);
-        }
-
+        Objects.requireNonNull(nodo, "NodoAST non può essere null");
+        Objects.requireNonNull(fileAnalizzato, "FileAnalizzato non può essere null");
+        
         return Collections.emptyList();
     }
 }
