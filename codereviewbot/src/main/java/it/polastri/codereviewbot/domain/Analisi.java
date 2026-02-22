@@ -3,7 +3,6 @@ package it.polastri.codereviewbot.domain;
 import java.time.LocalDateTime; 
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 import java.util.ArrayList; 
 import java.util.Collections; 
 
@@ -106,6 +105,6 @@ public class Analisi {
     public List<Issue> getIssuesPerFilePath(String filePath) {
         Objects.requireNonNull(filePath, "filePath non può essere null");
 
-        return issues.stream().filter(i -> filePath.equals(i.getFileAnalizzato().getFileSorgente().getPath())).collect(Collectors.toList());
+        return issues.stream().filter(i -> filePath.equals(i.getFileAnalizzato().getFileSorgente().getPath())).toList();
     }
 }

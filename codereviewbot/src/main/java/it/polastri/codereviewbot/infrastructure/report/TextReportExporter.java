@@ -5,6 +5,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+import it.polastri.codereviewbot.application.exception.ReportExportException;
 import it.polastri.codereviewbot.domain.Issue;
 import it.polastri.codereviewbot.domain.Report;
 
@@ -68,7 +69,7 @@ public class TextReportExporter implements ReportExporter {
             }
             Files.writeString(out, sb.toString(), StandardCharsets.UTF_8);
         } catch (IOException e) {
-            throw new RuntimeException(
+            throw new ReportExportException(
                 "Errore durante l'esportazione del report su: " + outputPath, e
             );
         }

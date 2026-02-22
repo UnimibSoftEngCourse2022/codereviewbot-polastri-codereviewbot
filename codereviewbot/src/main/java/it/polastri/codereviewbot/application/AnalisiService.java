@@ -6,7 +6,7 @@ import java.util.UUID;
 
 import it.polastri.codereviewbot.domain.*;
 import it.polastri.codereviewbot.infrastructure.loader.ProjectLoader;
-import it.polastri.codereviewbot.infrastructure.parser.Parser;
+import it.polastri.codereviewbot.infrastructure.parser.Parser; 
 
 /**
  * Application Service: coordina il caso d'uso "Esegui analisi".
@@ -18,7 +18,6 @@ import it.polastri.codereviewbot.infrastructure.parser.Parser;
  * - raccogliere le issue nell'oggetto Analisi
  * - produrre il RisultatoAnalisi finale e concludere l'analisi
  */
-
 public class AnalisiService {
 
     private final ProjectLoader projectLoader;
@@ -48,32 +47,10 @@ public class AnalisiService {
         try {
             // 3) Analizza tutti i file del progetto
             for (FileSorgente file : progetto.getFileSorgenti()) {
-
-                FileAnalizzato fileAnalizzato = new FileAnalizzato(generaIdFileAnalizzato(file), file);
+                FileAnalizzato fileAnalizzato = new FileAnalizzato(generaIdFileAnalizzato(), file);
                 analisi.aggiungiFileAnalizzato(fileAnalizzato);
 
-                // Se il linguaggio non è supportato, il file viene ignorato
-                if (!fileAnalizzato.isAnalizzabile()) {
-                    continue;
-                }
-
-                try {
-                    // 3.1) Parsing -> AST
-                    AST ast = parser.parse(file);
-                    fileAnalizzato.impostaAST(ast);
-                    
-                    // 3.2) Se parsing OK -> applicazione regole
-                    if (!fileAnalizzato.parsingRiuscito() || ast == null || ast.isEmpty()) {
-                        continue;
-                    }
-
-                    // 3.3) Applicazione regole -> Issue
-                    applicaRegole(analisi, fileAnalizzato, ast);
-
-                } catch (Exception e) {
-                    // Errore sul singolo file: segna parsing fallito e continua con i successivi
-                    fileAnalizzato.marcaParsingFallito(e.getMessage());
-                }
+                analizzaFile(analisi, fileAnalizzato);
             }
 
             // 4) Produce il risultato e conclude l'analisi
@@ -89,15 +66,43 @@ public class AnalisiService {
         }
     }
 
+    /**
+     * Analizza un singolo file: parsing, validazione AST e applicazione regole.
+     * In caso di errore sul singolo file, marca il parsing come fallito e termina senza bloccare l'analisi globale.
+     */
+    private void analizzaFile(Analisi analisi, FileAnalizzato fileAnalizzato) {
+        // Se il linguaggio non è supportato, il file viene ignorato
+        if (!fileAnalizzato.isAnalizzabile()) {
+            return;
+        }
+
+        try {
+            FileSorgente file = fileAnalizzato.getFileSorgente();
+
+            // Parsing -> AST
+            AST ast = parser.parse(file);
+            fileAnalizzato.impostaAST(ast);
+
+            // Se parsing non riuscito o AST vuoto -> niente regole
+            if (!fileAnalizzato.parsingRiuscito() || ast == null || ast.isEmpty()) {
+                return;
+            }
+
+            // Applicazione regole -> Issue
+            applicaRegole(analisi, fileAnalizzato, ast);
+
+        } catch (Exception e) {
+            // Errore sul singolo file: segna parsing fallito e continua con i successivi
+            fileAnalizzato.marcaParsingFallito(e.getMessage());
+        }
+    }
+
     // Applica tutte le regole a tutti i nodi rilevanti di un AST e registra nell'analisi le issue prodotte.
     private void applicaRegole(Analisi analisi, FileAnalizzato fileAnalizzato, AST ast) {
         for (NodoAST nodo : ast.getNodiRilevanti()) {
             for (RegolaAnalisi regola : regole) {
-
-                // Il nodo delega alla regola la decisione di produrre eventuali issue
                 List<Issue> issuesProdotte = nodo.accettaRegola(regola, fileAnalizzato);
 
-                // L'analisi raccoglie tutte le issue prodotte
                 for (Issue issue : issuesProdotte) {
                     analisi.registraIssue(issue);
                 }
@@ -106,10 +111,10 @@ public class AnalisiService {
     }
 
     private String generaIdAnalisi() {
-    	return "AN-" + UUID.randomUUID();
+        return "AN-" + UUID.randomUUID();
     }
 
-    private String generaIdFileAnalizzato(FileSorgente file) {
-    	return "FA-" + UUID.randomUUID();
+    private String generaIdFileAnalizzato() {
+        return "FA-" + UUID.randomUUID();
     }
 }

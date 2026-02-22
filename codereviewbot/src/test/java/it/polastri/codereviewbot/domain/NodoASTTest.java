@@ -21,7 +21,8 @@ class NodoASTTest {
         assertEquals(1, padre.getFigli().size());
         assertEquals(figlio, padre.getFigli().get(0));
 
-        assertThrows(UnsupportedOperationException.class, () -> padre.getFigli().add(figlio));
+        List<NodoAST> figliView = padre.getFigli();
+        assertThrows(UnsupportedOperationException.class, () -> figliView.add(figlio));
     }
 
     // accettaRegola() con una regola base non produce issue

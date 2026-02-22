@@ -124,15 +124,21 @@ class ReportServiceTest {
     // Il costruttore deve rifiutare binding duplicati per lo stesso formato
     @Test
     void rifiutaBindingsDuplicatiPerFormato() {
+        // Due exporter diversima con stesso formato -> duplicato
         SpyExporter exporter1 = new SpyExporter();
         SpyExporter exporter2 = new SpyExporter();
 
-        assertThrows(IllegalArgumentException.class, () -> new ReportService(
-                new QualityScoreService(),
-                List.of(
-                    new ReportService.ReportExporterBinding(ReportFormat.JSON, exporter1),
-                    new ReportService.ReportExporterBinding(ReportFormat.JSON, exporter2)
-                )
-        ));
+        QualityScoreService qualityScoreService = new QualityScoreService();
+
+        ReportService.ReportExporterBinding binding1 =
+                new ReportService.ReportExporterBinding(ReportFormat.JSON, exporter1);
+
+        ReportService.ReportExporterBinding binding2 =
+                new ReportService.ReportExporterBinding(ReportFormat.JSON, exporter2);
+
+        List<ReportService.ReportExporterBinding> bindings = List.of(binding1, binding2);
+
+        // La costruzione del servizio deve rifiutare duplicati sul formato
+        assertThrows(IllegalArgumentException.class, () -> new ReportService(qualityScoreService, bindings));
     }
 }

@@ -12,25 +12,30 @@ class RisultatoAnalisiTest {
     // Il costruttore rifiuta metriche null e conteggi negativi
     @Test
     void rifiutaMetricheNullECampiNegativi() {
+        Map<String, Integer> metriche = Map.of();
+
         assertThrows(NullPointerException.class,
                 () -> new RisultatoAnalisi(0, 0, null, 0));
 
         assertThrows(IllegalArgumentException.class,
-                () -> new RisultatoAnalisi(-1, 0, Map.of(), 0));
+                () -> new RisultatoAnalisi(-1, 0, metriche, 0));
 
         assertThrows(IllegalArgumentException.class,
-                () -> new RisultatoAnalisi(0, -1, Map.of(), 0));
+                () -> new RisultatoAnalisi(0, -1, metriche, 0));
 
         assertThrows(IllegalArgumentException.class,
-                () -> new RisultatoAnalisi(0, 0, Map.of(), -1));
+                () -> new RisultatoAnalisi(0, 0, metriche, -1));
     }
 
     // Le metriche salvate nel risultato devono essere non modificabili
     @Test
     void metricheNonModificabiliDallEsterno() {
-        RisultatoAnalisi r = new RisultatoAnalisi(0, 0, Map.of("files_analizzati", 1), 0);
-        assertThrows(UnsupportedOperationException.class,
-                () -> r.getMetrichePreliminari().put("x", 1));
+        Map<String, Integer> metriche = Map.of("files_analizzati", 1);
+        RisultatoAnalisi r = new RisultatoAnalisi(0, 0, metriche, 0);
+
+        Map<String, Integer> view = r.getMetrichePreliminari();
+
+        assertThrows(UnsupportedOperationException.class, () -> view.put("x", 1));
     }
 
     // creaDa() calcola correttamente conteggi e metriche a partire da issue e file analizzati
@@ -76,10 +81,13 @@ class RisultatoAnalisiTest {
     // creaDa() rifiuta liste null
     @Test
     void creaDaRifiutaListeNull() {
-        assertThrows(NullPointerException.class,
-                () -> RisultatoAnalisi.creaDa(null, List.of()));
+        List<FileAnalizzato> listaFileVuota = List.of();
+        List<Issue> listaIssueVuota = List.of();
 
         assertThrows(NullPointerException.class,
-                () -> RisultatoAnalisi.creaDa(List.of(), null));
+                () -> RisultatoAnalisi.creaDa(null, listaFileVuota));
+
+        assertThrows(NullPointerException.class,
+                () -> RisultatoAnalisi.creaDa(listaIssueVuota, null));
     }
 }

@@ -57,8 +57,16 @@ class ReportTest {
         assertEquals(2, c.get(Categoria.STILE).get(Severita.WARNING));
         assertEquals(1, c.get(Categoria.COMPLESSITA).get(Severita.ERROR));
 
-        // Mappa esterna non modificabile (sia livello 1 che livello 2)
-        assertThrows(UnsupportedOperationException.class, () -> c.put(Categoria.STILE, Map.of()));
-        assertThrows(UnsupportedOperationException.class, () -> c.get(Categoria.STILE).put(Severita.INFO, 99));
+        // mappa esterna non modificabile
+        Map<Categoria, Map<Severita, Integer>> classificazioneView = c;
+        Map<Severita, Integer> nuovaMappa = Map.of();
+
+        assertThrows(UnsupportedOperationException.class,
+                () -> classificazioneView.put(Categoria.STILE, nuovaMappa));
+
+        // mappa interna non modificabile
+        Map<Severita, Integer> stileView = c.get(Categoria.STILE);
+        assertThrows(UnsupportedOperationException.class,
+                () -> stileView.put(Severita.INFO, 99));
     }
 }

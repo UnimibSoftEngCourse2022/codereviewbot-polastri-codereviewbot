@@ -2,7 +2,6 @@ package it.polastri.codereviewbot.domain;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors; 
 
 /**
  * Rappresenta un linguaggio di programmazione supportato dal sistema,
@@ -25,7 +24,7 @@ public class Linguaggio {
                 .filter(s -> !s.isEmpty())
                 .map(s -> s.startsWith(".") ? s.toLowerCase() : ("." + s.toLowerCase()))
                 .distinct()
-                .collect(Collectors.toUnmodifiableList());
+                .toList();
     }
 	
 	public String getNome() {

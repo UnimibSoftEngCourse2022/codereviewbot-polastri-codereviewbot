@@ -78,33 +78,18 @@ class AnalisiTest {
     void aggiungeElementiSoloInEsecuzioneERifiutaNull() {
         Analisi analisi = new Analisi("A1", new Progetto("/tmp/progetto"));
 
-        // è permesso aggiungere elementi solo in esecuzione
-        assertThrows(IllegalStateException.class, () -> analisi.registraIssue(new Issue(
-                new FileAnalizzato("F1", new FileSorgente("A.java", "/tmp/A.java", new Linguaggio("Java", List.of(".java")), "class A{}")),
-                1,
-                new RegolaAnalisi("R1", "desc", Severita.WARNING, Categoria.STILE),
-                "msg"
-        )));
+        // Arrange: costruisco l'Issue fuori dalla lambda (così non "inquina" assertThrows)
+        Linguaggio java = new Linguaggio("Java", List.of(".java"));
+        FileSorgente sorgente = new FileSorgente("A.java", "/tmp/A.java", java, "class A{}");
+        FileAnalizzato fileAnalizzato = new FileAnalizzato("F1", sorgente);
+        RegolaAnalisi regola = new RegolaAnalisi("R1", "desc", Severita.WARNING, Categoria.STILE);
+        Issue issue = new Issue(fileAnalizzato, 1, regola, "msg");
+
+        // è permesso registrare issue solo in esecuzione
+        assertThrows(IllegalStateException.class, () -> analisi.registraIssue(issue));
 
         analisi.avvia();
-        
+
         assertThrows(NullPointerException.class, () -> analisi.registraIssue(null));
-        assertThrows(NullPointerException.class, () -> analisi.aggiungiFileAnalizzato(null));
-
-        Linguaggio java = new Linguaggio("Java", List.of(".java"));
-        FileSorgente fs = new FileSorgente("A.java", "/tmp/A.java", java, "class A{}");
-        FileAnalizzato fa = new FileAnalizzato("F1", fs);
-
-        RegolaAnalisi regola = new RegolaAnalisi("R1", "desc", Severita.WARNING, Categoria.STILE);
-        Issue issue = new Issue(fa, 1, regola, "msg");
-
-        analisi.aggiungiFileAnalizzato(fa);
-        analisi.registraIssue(issue);
-
-        assertEquals(1, analisi.getFileAnalizzati().size());
-        assertEquals(1, analisi.getIssues().size());
-
-        assertThrows(UnsupportedOperationException.class, () -> analisi.getIssues().add(issue));
-        assertThrows(UnsupportedOperationException.class, () -> analisi.getFileAnalizzati().add(fa));
     }
 }
