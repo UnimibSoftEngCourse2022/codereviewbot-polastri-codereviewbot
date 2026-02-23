@@ -1,10 +1,15 @@
 package it.polastri.codereviewbot;
 
+import it.polastri.codereviewbot.infrastructure.logger.ConsoleLogger;
+import it.polastri.codereviewbot.infrastructure.logger.Logger;
+
 /**
- * Hello world!
+ * Classe di avvio dell'applicazione.
  */
 public class App {
+
     public static void main(String[] args) {
-        System.out.println("Hello World!");
+        Logger logger = new ConsoleLogger();
+        logger.info("Applicazione avviata");
     }
 }
