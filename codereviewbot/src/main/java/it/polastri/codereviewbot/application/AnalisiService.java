@@ -6,7 +6,9 @@ import java.util.UUID;
 
 import it.polastri.codereviewbot.domain.*;
 import it.polastri.codereviewbot.infrastructure.loader.ProjectLoader;
-import it.polastri.codereviewbot.infrastructure.parser.Parser; 
+import it.polastri.codereviewbot.infrastructure.parser.Parser;
+import it.polastri.codereviewbot.infrastructure.logger.ConsoleLogger;
+import it.polastri.codereviewbot.infrastructure.logger.Logger;
 
 /**
  * Application Service: coordina il caso d'uso "Esegui analisi".
@@ -18,16 +20,25 @@ import it.polastri.codereviewbot.infrastructure.parser.Parser;
  * - raccogliere le issue nell'oggetto Analisi
  * - produrre il RisultatoAnalisi finale e concludere l'analisi
  */
+
 public class AnalisiService {
 
     private final ProjectLoader projectLoader;
     private final Parser parser;
     private final List<RegolaAnalisi> regole;
+    private final Logger logger;
 
+    // Costruttore per compatibilità: usa un ConsoleLogger di default.
     public AnalisiService(ProjectLoader projectLoader, Parser parser, List<RegolaAnalisi> regole) {
+        this(projectLoader, parser, regole, new ConsoleLogger());
+    }
+
+    // Costruttore che permette l’iniezione del logger.
+    public AnalisiService(ProjectLoader projectLoader, Parser parser, List<RegolaAnalisi> regole, Logger logger) {
         this.projectLoader = Objects.requireNonNull(projectLoader, "ProjectLoader non può essere null");
         this.parser = Objects.requireNonNull(parser, "Parser non può essere null");
         this.regole = List.copyOf(Objects.requireNonNull(regole, "Lista regole non può essere null"));
+        this.logger = Objects.requireNonNull(logger, "Logger non può essere null");
     }
 
     /**
@@ -37,15 +48,20 @@ public class AnalisiService {
     public Analisi eseguiAnalisi(String projectPath) {
         Objects.requireNonNull(projectPath, "Project path non può essere null");
 
-        // 1) Carica progetto (I/O delegato a infrastructure)
+        logger.info("Avvio analisi progetto: " + projectPath);
+
+        // Carica progetto (può lanciare eccezioni di I/O)
         Progetto progetto = projectLoader.caricaProgetto(projectPath);
 
-        // 2) Crea e avvia l'analisi
+        // Crea e avvia l'analisi prima di entrare nel processo (così possiamo marcarla FALLITA in caso di errori)
         Analisi analisi = new Analisi(generaIdAnalisi(), progetto);
         analisi.avvia();
 
         try {
-            // 3) Analizza tutti i file del progetto
+            int numFile = progetto.getFileSorgenti().size();
+            logger.info("Progetto caricato. File sorgente trovati: " + numFile);
+
+            // Analizza tutti i file del progetto
             for (FileSorgente file : progetto.getFileSorgenti()) {
                 FileAnalizzato fileAnalizzato = new FileAnalizzato(generaIdFileAnalizzato(), file);
                 analisi.aggiungiFileAnalizzato(fileAnalizzato);
@@ -53,15 +69,17 @@ public class AnalisiService {
                 analizzaFile(analisi, fileAnalizzato);
             }
 
-            // 4) Produce il risultato e conclude l'analisi
+            // Produce il risultato e conclude l'analisi
             RisultatoAnalisi risultato = RisultatoAnalisi.creaDa(analisi.getIssues(), analisi.getFileAnalizzati());
             analisi.concludi(risultato);
 
+            logger.info("Analisi completata. Issue totali: " + analisi.getIssues().size());
             return analisi;
 
         } catch (Exception e) {
             // Errore "grave" nel processo: marca l'analisi come fallita
             analisi.fallisci();
+            logger.error("Errore grave durante l'analisi. Analisi marcata come FALLITA.", e);
             return analisi;
         }
     }
@@ -73,6 +91,8 @@ public class AnalisiService {
     private void analizzaFile(Analisi analisi, FileAnalizzato fileAnalizzato) {
         // Se il linguaggio non è supportato, il file viene ignorato
         if (!fileAnalizzato.isAnalizzabile()) {
+            // Log “soft” (non è un errore: è un requisito RD1)
+            logger.info("File ignorato (linguaggio non supportato): " + fileAnalizzato.getFileSorgente().getPath());
             return;
         }
 
@@ -85,6 +105,7 @@ public class AnalisiService {
 
             // Se parsing non riuscito o AST vuoto -> niente regole
             if (!fileAnalizzato.parsingRiuscito() || ast == null || ast.isEmpty()) {
+                logger.warning("Parsing non riuscito o AST vuoto per file: " + file.getPath());
                 return;
             }
 
@@ -94,6 +115,9 @@ public class AnalisiService {
         } catch (Exception e) {
             // Errore sul singolo file: segna parsing fallito e continua con i successivi
             fileAnalizzato.marcaParsingFallito(e.getMessage());
+            logger.warning("Errore durante analisi file (continuo con gli altri): "
+                    + fileAnalizzato.getFileSorgente().getPath()
+                    + " - " + e.getMessage());
         }
     }
 

@@ -2,6 +2,7 @@ package it.polastri.codereviewbot.application;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -10,11 +11,33 @@ import org.junit.jupiter.api.Test;
 import it.polastri.codereviewbot.domain.*;
 import it.polastri.codereviewbot.domain.rules.RegolaNoTODO;
 import it.polastri.codereviewbot.infrastructure.report.ReportExporter;
+import it.polastri.codereviewbot.infrastructure.logger.LogLevel;
+import it.polastri.codereviewbot.infrastructure.logger.Logger;
 
 class ReportServiceTest {
 
-	/* Oggetto utilizzato per non scrivere file su disco, ma poter 
-	 * comunque testare che ReportService chiami ReportExporter correttamente 
+    /**
+     * Logger spy per test: registra tutte le chiamate log(level, message)
+     * così da verificare che il servizio produca log nei punti chiave
+     * senza dipendere da output su console o timestamp.
+     */
+    private static class SpyLogger implements Logger {
+        static record Entry(LogLevel level, String message) {}
+
+        private final List<Entry> entries = new ArrayList<>();
+
+        @Override
+        public void log(LogLevel level, String message) {
+            entries.add(new Entry(level, message));
+        }
+
+        boolean hasLevel(LogLevel level) {
+            return entries.stream().anyMatch(e -> e.level() == level);
+        }
+    }
+
+	/* Oggetto utilizzato per non scrivere file su disco, ma poter
+	 * comunque testare che ReportService chiami ReportExporter correttamente.
 	 */
     private static class SpyExporter implements ReportExporter {
         Report lastReport;
@@ -27,27 +50,38 @@ class ReportServiceTest {
         }
     }
 
-    // Il servizio deve rifiutare un'analisi non completata (RD5)
+    // Il servizio deve rifiutare un'analisi non completata.
     @Test
     void generaReportRichiedeAnalisiCompletata() {
         SpyExporter exporter = new SpyExporter();
+        SpyLogger logger = new SpyLogger();
+
         ReportService service = new ReportService(
                 new QualityScoreService(),
-                List.of(new ReportService.ReportExporterBinding(ReportFormat.JSON, exporter))
+                List.of(new ReportService.ReportExporterBinding(ReportFormat.JSON, exporter)),
+                logger
         );
 
         Analisi analisi = new Analisi("A1", new Progetto("/p")); // stato CREATA
+
         assertThrows(IllegalStateException.class,
                 () -> service.generaReportQualita(analisi, ReportFormat.JSON, "/out.json"));
+
+        // Ci si aspetta un ERROR (analisi non completata)
+        assertTrue(logger.hasLevel(LogLevel.ERROR),
+                "Mi aspetto un ERROR se provo a generare report su analisi non completata");
     }
 
-    // Il servizio genera report, calcola lo score e delega l'export all'exporter
+    // Il servizio genera report, calcola lo score e delega l'export all'exporter.
     @Test
     void generaReportCalcolaScoreEClassificaIssueEDelegaExport() {
         SpyExporter exporter = new SpyExporter();
+        SpyLogger logger = new SpyLogger();
+
         ReportService service = new ReportService(
                 new QualityScoreService(),
-                List.of(new ReportService.ReportExporterBinding(ReportFormat.JSON, exporter))
+                List.of(new ReportService.ReportExporterBinding(ReportFormat.JSON, exporter)),
+                logger
         );
 
         // Analisi completata con 1 issue WARNING (NoTODO)
@@ -73,7 +107,7 @@ class ReportServiceTest {
         assertEquals(analisi, report.getAnalisi());
         assertEquals(ReportFormat.JSON, report.getFormato());
 
-        // Score atteso: base 100 - WARNING(2) = 98 
+        // Score atteso: base 100 - WARNING(2) = 98
         assertEquals(98, report.getScoreQualita());
 
         // Verifica export delegato
@@ -83,15 +117,21 @@ class ReportServiceTest {
 
         // Verifica classificazione coerente: categoria STILE, severità WARNING, count=1
         assertEquals(1, report.getClassificazione().get(Categoria.STILE).get(Severita.WARNING));
+
+        // Deve esserci almeno un INFO durante generazione/esportazione
+        assertTrue(logger.hasLevel(LogLevel.INFO), "Mi aspetto log INFO durante generazione/export report");
     }
 
-    // Se outputPath è null/blank il servizio non deve chiamare l'exporter
+    // Se outputPath è null/blank il servizio non deve chiamare l'exporter.
     @Test
     void nonEsportaSeOutputPathAssente() {
         SpyExporter exporter = new SpyExporter();
+        SpyLogger logger = new SpyLogger();
+
         ReportService service = new ReportService(
                 new QualityScoreService(),
-                List.of(new ReportService.ReportExporterBinding(ReportFormat.JSON, exporter))
+                List.of(new ReportService.ReportExporterBinding(ReportFormat.JSON, exporter)),
+                logger
         );
 
         Analisi analisi = new Analisi("A1", new Progetto("/p"));
@@ -103,14 +143,20 @@ class ReportServiceTest {
         assertNotNull(report);
         assertNull(exporter.lastReport);
         assertNull(exporter.lastPath);
+
+        // Ci si aspetta comunque INFO (generazione report avviata)
+        assertTrue(logger.hasLevel(LogLevel.INFO), "Mi aspetto almeno un INFO anche senza esportazione");
     }
 
-    // Se viene richiesto export ma non esiste un exporter registrato per quel formato, deve fallire
+    // Se viene richiesto export ma non esiste un exporter registrato per quel formato, deve fallire.
     @Test
     void fallisceSeMancaExporterPerFormato() {
+        SpyLogger logger = new SpyLogger();
+
         ReportService service = new ReportService(
                 new QualityScoreService(),
-                List.of() // nessun exporter
+                List.of(),
+                logger
         );
 
         Analisi analisi = new Analisi("A1", new Progetto("/p"));
@@ -119,12 +165,15 @@ class ReportServiceTest {
 
         assertThrows(IllegalStateException.class,
                 () -> service.generaReportQualita(analisi, ReportFormat.PDF, "/out.pdf"));
+
+        // Ci si aspetta un ERROR (manca exporter per formato richiesto)
+        assertTrue(logger.hasLevel(LogLevel.ERROR), "Mi aspetto un ERROR se manca l'exporter per il formato");
     }
 
-    // Il costruttore deve rifiutare binding duplicati per lo stesso formato
+    // Il costruttore deve rifiutare binding duplicati per lo stesso formato.
     @Test
     void rifiutaBindingsDuplicatiPerFormato() {
-        // Due exporter diversima con stesso formato -> duplicato
+        // Due exporter diversi ma con stesso formato -> duplicato
         SpyExporter exporter1 = new SpyExporter();
         SpyExporter exporter2 = new SpyExporter();
 
