@@ -18,5 +18,6 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      - name: Build and test
+      - name: Build and test (Maven)
+        working-directory: codereviewbot
         run: mvn -B test
