@@ -58,8 +58,8 @@ public class AnalisiService {
         analisi.avvia();
 
         try {
-            int numFile = progetto.getFileSorgenti().size();
-            logger.info("Progetto caricato. File sorgente trovati: " + numFile);
+        	List<FileSorgente> files = progetto.getFileSorgenti();
+        	logger.info("Progetto caricato. File sorgente trovati: " + files.size());
 
             // Analizza tutti i file del progetto
             for (FileSorgente file : progetto.getFileSorgenti()) {
