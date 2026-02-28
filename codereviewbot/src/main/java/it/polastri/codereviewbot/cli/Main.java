@@ -17,36 +17,59 @@ import it.polastri.codereviewbot.infrastructure.parser.Parser;
 import it.polastri.codereviewbot.infrastructure.parser.StubParser;
 import it.polastri.codereviewbot.infrastructure.report.*;
 
+/**
+ * Entry point dell'applicazione CodeReviewBot in modalità CLI.
+ *
+ * La classe si occupa di:
+ * - parsare gli argomenti da linea di comando
+ * - configurare le dipendenze applicative
+ * - orchestrare i casi d'uso principali (CU1 e CU2)
+ *
+ * Restituisce un exit code coerente con l'esito dell'esecuzione.
+ */
 public class Main {
 
+    // Delega l'esecuzione al metodo e termina il processo con l'exit code restituito.
     public static void main(String[] args) {
         int exitCode = run(args);
         System.exit(exitCode);
     }
 
+    /**
+     * Esegue l'applicazione CLI.
+     * args: argomenti da linea di comando
+     * exit codes: 0 = successo, 1 = errore generico, 2 = errore input
+     */
     static int run(String[] args) {
         Logger logger = new ConsoleLogger();
 
+        // Configurazione dipendenze infrastructure
+        ProjectLoader loader = new FileSystemProjectLoader();
+        Parser parser = new StubParser();
+
+        return run(args, logger, loader, parser);
+    }
+
+    /**
+     * Variante di run usabile dai test: consente di passare dipendenze fittizie (stub).
+     */
+    static int run(String[] args, Logger logger, ProjectLoader loader, Parser parser) {
         try {
             CliOptions opt = CliOptions.parse(args);
 
             if (opt.help) {
-                printHelp();
+                printHelp(logger);
                 return 0;
             }
 
-            // Controlli input 
+            // Validazione input minimo
             if (opt.projectPath == null || opt.projectPath.isBlank()) {
-                System.err.println("Errore: --project è obbligatorio.");
-                printHelp();
+                logger.error("Errore: --project è obbligatorio.");
+                printHelp(logger);
                 return 2;
             }
 
             ReportFormat format = parseFormat(opt.format);
-
-            // Dipendenze 
-            ProjectLoader loader = new FileSystemProjectLoader();
-            Parser parser = new StubParser();
 
             List<RegolaAnalisi> regole = List.of(
                     new RegolaNoTODO(),
@@ -54,57 +77,72 @@ public class Main {
                     new RegolaMetodoTroppoLungo(30)
             );
 
+            // CU1: Analisi del progetto
             AnalisiService analisiService =
                     new AnalisiService(loader, parser, regole, logger);
 
+            // Configurazione export report
             List<ReportService.ReportExporterBinding> bindings = List.of(
                     new ReportService.ReportExporterBinding(ReportFormat.HTML, new HtmlReportExporter()),
                     new ReportService.ReportExporterBinding(ReportFormat.JSON, new JsonReportExporter()),
                     new ReportService.ReportExporterBinding(ReportFormat.PDF, new PdfReportExporter())
             );
 
+            // CU2: Generazione report
             ReportService reportService =
                     new ReportService(new QualityScoreService(), bindings, logger);
 
-            // CU1: Analisi
-            Analisi analisi = analisiService.eseguiAnalisi(opt.projectPath);
-
-            if (analisi.getStatoAnalisi() != StatoAnalisi.COMPLETATA) {
-                System.err.println("Analisi fallita. Controllare i log.");
-                return 1;
-            }
-
-            // CU2: Report 
-            Report report =
-                    reportService.generaReportQualita(analisi, format, opt.outputPath);
-
-            // Output per utente tipo
-            System.out.println("Analisi completata con successo.");
-            System.out.println("Issue rilevate: " + analisi.getIssues().size());
-            System.out.println("Quality score: " + report.getScoreQualita() + "/100");
-
-            if (opt.outputPath != null && !opt.outputPath.isBlank()) {
-                System.out.println("Report esportato in: " + opt.outputPath);
-            } else {
-                System.out.println("Report generato in memoria (nessun file di output).");
-            }
-
-            return 0;
+            return eseguiCasiUso(opt, format, analisiService, reportService, logger);
 
         } catch (IllegalArgumentException e) {
-            System.err.println("Errore argomenti: " + e.getMessage());
-            printHelp();
+            logger.error("Errore argomenti: " + e.getMessage());
+            printHelp(logger);
             return 2;
         } catch (Exception e) {
-            System.err.println("Errore inatteso: " + e.getMessage());
+            logger.error("Errore inatteso", e);
             return 1;
         }
     }
 
+    // Esegue CU1 e CU2 una volta validati gli input e configurate le dipendenze.
+    private static int eseguiCasiUso(
+            CliOptions opt,
+            ReportFormat format,
+            AnalisiService analisiService,
+            ReportService reportService,
+            Logger logger) {
+
+        Analisi analisi = analisiService.eseguiAnalisi(opt.projectPath);
+
+        if (analisi.getStatoAnalisi() != StatoAnalisi.COMPLETATA) {
+            logger.error("Analisi fallita. Controllare i log.");
+            return 1;
+        }
+
+        Report report =
+                reportService.generaReportQualita(analisi, format, opt.outputPath);
+
+        // Output sintetico per l'utente
+        logger.info("Analisi completata con successo.");
+        logger.info("Issue rilevate: " + analisi.getIssues().size());
+        logger.info("Quality score: " + report.getScoreQualita() + "/100");
+
+        if (opt.outputPath != null && !opt.outputPath.isBlank()) {
+            logger.info("Report esportato in: " + opt.outputPath);
+        } else {
+            logger.info("Nessun file di output specificato.");
+        }
+
+        return 0;
+    }
+
+    /**
+     * Converte il formato passato da CLI nel corrispondente enum.
+     * value: stringa formato (HTML, JSON, PDF)
+     */
     private static ReportFormat parseFormat(String value) {
         if (value == null || value.isBlank()) {
-        	// default
-            return ReportFormat.HTML;
+            return ReportFormat.HTML; // default
         }
         try {
             return ReportFormat.valueOf(value.trim().toUpperCase(Locale.ROOT));
@@ -114,19 +152,20 @@ public class Main {
         }
     }
 
-    private static void printHelp() {
-        System.out.println("""
+    // Stampa il messaggio di help della CLI.
+    private static void printHelp(Logger logger) {
+        logger.info("""
                 CodeReviewBot - CLI
 
                 Uso:
-                  java -jar codereviewbot.jar --project <path>
-                                          [--format HTML|JSON|PDF]
-                                          [--out <file>]
-                                          [--help]
+                  java -jar <jar-file>.jar --project <path>
+                                           [--format HTML|JSON|PDF]
+                                           [--out <file>]
+                                           [--help]
 
                 Esempi:
-                  java -jar codereviewbot.jar --project ./repo --format HTML --out report.html
-                  java -jar codereviewbot.jar --project ./repo --format JSON --out report.json
+                  java -jar <jar-file>.jar --project ./repo --format HTML --out report.html
+                  java -jar <jar-file>.jar --project ./repo --format JSON --out report.json
 
                 Note:
                   - Il formato di default è HTML.
@@ -134,7 +173,7 @@ public class Main {
                 """);
     }
 
-    // Parser minimale degli argomenti CLI
+    // Parser minimale degli argomenti da linea di comando.
     static class CliOptions {
         boolean help;
         String projectPath;
@@ -144,21 +183,39 @@ public class Main {
         static CliOptions parse(String[] args) {
             CliOptions o = new CliOptions();
 
-            for (int i = 0; i < args.length; i++) {
-                switch (args[i]) {
-                    case "--help", "-h" -> o.help = true;
-                    case "--project", "-p" -> o.projectPath = next(args, ++i, "--project richiede un valore");
-                    case "--format", "-f" -> o.format = next(args, ++i, "--format richiede un valore");
-                    case "--out", "-o" -> o.outputPath = next(args, ++i, "--out richiede un valore");
-                    default -> throw new IllegalArgumentException("Argomento sconosciuto: " + args[i]);
+            int i = 0;
+            while (i < args.length) {
+                String a = args[i];
+
+                switch (a) {
+                    case "--help", "-h" -> {
+                        o.help = true;
+                        i++;
+                    }
+                    case "--project", "-p" -> {
+                        o.projectPath = next(args, i + 1, "--project richiede un valore");
+                        i += 2;
+                    }
+                    case "--format", "-f" -> {
+                        o.format = next(args, i + 1, "--format richiede un valore");
+                        i += 2;
+                    }
+                    case "--out", "-o" -> {
+                        o.outputPath = next(args, i + 1, "--out richiede un valore");
+                        i += 2;
+                    }
+                    default -> throw new IllegalArgumentException("Argomento sconosciuto: " + a);
                 }
             }
+
             return o;
         }
 
-        private static String next(String[] args, int i, String err) {
-            if (i >= args.length) throw new IllegalArgumentException(err);
-            return args[i];
+        private static String next(String[] args, int index, String err) {
+            if (index >= args.length) {
+                throw new IllegalArgumentException(err);
+            }
+            return args[index];
         }
     }
 }

@@ -10,7 +10,6 @@
   <version>0.0.1-SNAPSHOT</version>
 
   <name>codereviewbot</name>
-  <!-- change it to the project's website -->
   <url>http://www.example.com</url>
 
   <properties>
@@ -37,14 +36,12 @@
       <scope>test</scope>
     </dependency>
 
-    <!-- Optionally: parameterized tests support -->
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-params</artifactId>
       <scope>test</scope>
     </dependency>
 
-    <!-- (Consigliato) engine JUnit 5 -->
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-engine</artifactId>
@@ -54,15 +51,12 @@
 
   <build>
     <pluginManagement>
-      <!-- lock down plugins versions to avoid using Maven defaults (may be moved to parent pom) -->
       <plugins>
-        <!-- clean lifecycle -->
         <plugin>
           <artifactId>maven-clean-plugin</artifactId>
           <version>3.4.0</version>
         </plugin>
 
-        <!-- default lifecycle -->
         <plugin>
           <artifactId>maven-resources-plugin</artifactId>
           <version>3.3.1</version>
@@ -93,7 +87,6 @@
           <version>3.1.2</version>
         </plugin>
 
-        <!-- site lifecycle -->
         <plugin>
           <artifactId>maven-site-plugin</artifactId>
           <version>3.12.1</version>
@@ -106,17 +99,27 @@
       </plugins>
     </pluginManagement>
 
-    <!-- Plugin eseguiti realmente nella build -->
     <plugins>
 
-      <!-- (AGGIUNTO) Attiva davvero la versione fissata in pluginManagement -->
+      <!-- Attiva davvero le versioni fissate in pluginManagement -->
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
       </plugin>
 
-      <!-- (AGGIUNTO) Attiva davvero la versione fissata in pluginManagement -->
       <plugin>
         <artifactId>maven-surefire-plugin</artifactId>
+      </plugin>
+
+      <!-- (AGGIUNTO) Jar eseguibile: imposta l'entrypoint della CLI -->
+      <plugin>
+        <artifactId>maven-jar-plugin</artifactId>
+        <configuration>
+          <archive>
+            <manifest>
+              <mainClass>it.polastri.codereviewbot.cli.Main</mainClass>
+            </manifest>
+          </archive>
+        </configuration>
       </plugin>
 
       <!-- JaCoCo: genera report XML per SonarQube -->
@@ -125,15 +128,12 @@
         <artifactId>jacoco-maven-plugin</artifactId>
         <version>0.8.12</version>
         <executions>
-          <!-- Attacca l'agent JaCoCo ai test -->
           <execution>
             <id>prepare-agent</id>
             <goals>
               <goal>prepare-agent</goal>
             </goals>
           </execution>
-
-          <!-- Genera il report XML (necessario a SonarQube) -->
           <execution>
             <id>report</id>
             <phase>verify</phase>
@@ -144,12 +144,13 @@
         </executions>
       </plugin>
 
-      <!-- (AGGIUNTO) Fissa versione sonar-maven-plugin per evitare warning -->
+      <!-- Versione fissata per evitare warning -->
       <plugin>
         <groupId>org.sonarsource.scanner.maven</groupId>
         <artifactId>sonar-maven-plugin</artifactId>
         <version>4.0.0.4121</version>
       </plugin>
+
     </plugins>
   </build>
 
