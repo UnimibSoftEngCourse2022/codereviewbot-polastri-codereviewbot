@@ -108,6 +108,17 @@
 
     <!-- Plugin eseguiti realmente nella build -->
     <plugins>
+
+      <!-- (AGGIUNTO) Attiva davvero la versione fissata in pluginManagement -->
+      <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+      </plugin>
+
+      <!-- (AGGIUNTO) Attiva davvero la versione fissata in pluginManagement -->
+      <plugin>
+        <artifactId>maven-surefire-plugin</artifactId>
+      </plugin>
+
       <!-- JaCoCo: genera report XML per SonarQube -->
       <plugin>
         <groupId>org.jacoco</groupId>
@@ -133,7 +144,7 @@
         </executions>
       </plugin>
 
-      <!-- Opzionale: fissa versione sonar-maven-plugin per evitare warning -->
+      <!-- (AGGIUNTO) Fissa versione sonar-maven-plugin per evitare warning -->
       <plugin>
         <groupId>org.sonarsource.scanner.maven</groupId>
         <artifactId>sonar-maven-plugin</artifactId>
