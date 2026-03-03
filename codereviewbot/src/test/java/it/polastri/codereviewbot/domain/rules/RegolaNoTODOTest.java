@@ -15,7 +15,7 @@ class RegolaNoTODOTest {
 
     // La regola deve generare una issue se nel nodo compare "TODO"
     @Test
-    void generaIssueSeTodoPresent() {
+    void generaIssueSeTodoPresenteNelCommentoDiRiga() {
         RegolaNoTODO regola = new RegolaNoTODO();
 
         Linguaggio javaLang = new Linguaggio("Java", List.of(".java"));
@@ -23,6 +23,19 @@ class RegolaNoTODOTest {
         FileAnalizzato fa = new FileAnalizzato("F1", fs);
 
         NodoAST nodo = new NodoAST("LINE", "// TODO: fix", 12);
+
+        assertEquals(1, regola.applica(nodo, fa).size());
+    }
+    
+    @Test
+    void generaIssueSeTodoPresenteNelCommentoDiBlocco() {
+        RegolaNoTODO regola = new RegolaNoTODO();
+
+        Linguaggio javaLang = new Linguaggio("Java", List.of(".java"));
+        FileSorgente fs = new FileSorgente("A.java", "/p/A.java", javaLang, "class A{}");
+        FileAnalizzato fa = new FileAnalizzato("F1", fs);
+
+        NodoAST nodo = new NodoAST("LINE", "/* TODO: fix */", 7);
 
         assertEquals(1, regola.applica(nodo, fa).size());
     }
@@ -37,6 +50,21 @@ class RegolaNoTODOTest {
         FileAnalizzato fa = new FileAnalizzato("F1", fs);
 
         NodoAST nodo = new NodoAST("LINE", "System.out.println(\"ok\");", 5);
+
+        assertTrue(regola.applica(nodo, fa).isEmpty());
+    }
+    
+    // La regola non deve generare issue se non presente in un commento
+    @Test
+    void nonGeneraIssueSeTodoEParteDiUnIdentificatore() {
+        RegolaNoTODO regola = new RegolaNoTODO();
+
+        Linguaggio javaLang = new Linguaggio("Java", List.of(".java"));
+        FileSorgente fs = new FileSorgente("A.java", "/p/A.java", javaLang, "class A{}");
+        FileAnalizzato fa = new FileAnalizzato("F1", fs);
+
+        // "RegolaNoTODO" contiene la substring TODO ma NON deve essere segnalata
+        NodoAST nodo = new NodoAST("LINE", "public class RegolaNoTODO {}", 3);
 
         assertTrue(regola.applica(nodo, fa).isEmpty());
     }

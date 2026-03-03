@@ -251,4 +251,33 @@ class FileSystemProjectLoaderTest {
         String e3 = (String) m.invoke(null, "Estensione non supportata.");
         assertEquals("", e3);
     }
+    
+    @Test
+    void caricaProgetto_escludeTargetSrcTestEVscodeCodereviewbot() throws Exception {
+        Path mainJava = tempDir.resolve("src/main/java");
+        Files.createDirectories(mainJava);
+        Files.writeString(mainJava.resolve("A.java"), "class A {}");
+
+        Path testJava = tempDir.resolve("src/test/java");
+        Files.createDirectories(testJava);
+        Files.writeString(testJava.resolve("ATest.java"), "class ATest {}");
+
+        Path target = tempDir.resolve("target");
+        Files.createDirectories(target);
+        Files.writeString(target.resolve("Gen.java"), "class Gen {}");
+
+        Path vsExt = tempDir.resolve("vscode-codereviewbot/src");
+        Files.createDirectories(vsExt);
+        Files.writeString(vsExt.resolve("x.ts"), "console.log('x');");
+
+        FileSystemProjectLoader loader = new FileSystemProjectLoader();
+        var progetto = loader.caricaProgetto(tempDir.toString());
+
+        assertEquals(1, progetto.getFileSorgenti().size());
+
+        var file = progetto.getFileSorgenti().get(0);
+        String path = file.getPath(); 
+
+        assertTrue(path.replace("\\", "/").contains("/src/main/java/A.java"));
+    }
 }

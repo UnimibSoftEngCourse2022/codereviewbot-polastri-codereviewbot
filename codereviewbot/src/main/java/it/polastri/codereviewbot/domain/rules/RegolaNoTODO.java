@@ -3,6 +3,7 @@ package it.polastri.codereviewbot.domain.rules;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.regex.Pattern;
 
 import it.polastri.codereviewbot.domain.Categoria;
 import it.polastri.codereviewbot.domain.FileAnalizzato;
@@ -12,18 +13,24 @@ import it.polastri.codereviewbot.domain.RegolaAnalisi;
 import it.polastri.codereviewbot.domain.Severita;
 
 /**
- * Regola di analisi che segnala la presenza di "TODO" nel codice/commenti.
- * Scopo: dimostrare una regola semplice che produce issue (WARNING).
+ * Regola di analisi che segnala la presenza di "TODO" nei commenti.
+ *
+ * Versione raffinata:
+ * - segnala TODO solo come parola intera (evita falsi positivi tipo RegolaNoTODO o R_NO_TODO)
+ * - considera TODO solo se presente in un commento 
  */
-
+ 
 public class RegolaNoTODO extends RegolaAnalisi {
+
+    private static final Pattern TODO_WORD = Pattern.compile("\\bTODO\\b", Pattern.CASE_INSENSITIVE);
 
     public RegolaNoTODO() {
         super(
-            "R_NO_TODO", 
+            "R_NO_TODO",
             "Evita di lasciare TODO nel codice: devono essere risolti o tracciati altrove.",
-            Severita.WARNING, 
-            Categoria.STILE);
+            Severita.WARNING,
+            Categoria.STILE
+        );
     }
 
     @Override
@@ -36,13 +43,40 @@ public class RegolaNoTODO extends RegolaAnalisi {
             return Collections.emptyList();
         }
 
-        // Controllo semplice: se nel testo del nodo compare "TODO" (case-insensitive) segnala una issue
-        if (valore.toUpperCase().contains("TODO")) {
-            Issue issue = new Issue(fileAnalizzato, nodo.getLinea(), this, 
-            		"Presente TODO nel codice: rimuovere o risolvere il TODO.");
+        if (containsTodoInComment(valore)) {
+            Issue issue = new Issue(
+                fileAnalizzato,
+                nodo.getLinea(),
+                this,
+                "Presente TODO nel commento: rimuovere o risolvere il TODO."
+            );
             return List.of(issue);
         }
 
         return Collections.emptyList();
+    }
+
+    private static boolean containsTodoInComment(String line) {
+        // 1) Commento di riga: // ...
+        int idxLineComment = line.indexOf("//");
+        if (idxLineComment >= 0) {
+            String comment = line.substring(idxLineComment + 2);
+            return TODO_WORD.matcher(comment).find();
+        }
+
+        // 2) Inizio commento di blocco: /* ...
+        int idxBlockComment = line.indexOf("/*");
+        if (idxBlockComment >= 0) {
+            String comment = line.substring(idxBlockComment + 2);
+            return TODO_WORD.matcher(comment).find();
+        }
+
+        // 3) Righe tipiche dentro commento di blocco (Javadoc o multiline): " * ..."
+        String trimmedLeft = line.stripLeading();
+        if (trimmedLeft.startsWith("*")) {
+            return TODO_WORD.matcher(trimmedLeft).find();
+        }
+
+        return false;
     }
 }
