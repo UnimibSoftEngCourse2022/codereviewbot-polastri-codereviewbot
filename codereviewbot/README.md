@@ -37,9 +37,13 @@ Nelle applicazioni reali è preferibile utilizzare un framework di logging invec
 ## Installazione 
 
 Installare l'estensione in Visual Studio Code: 
-- aprire VS Code 
-- aprire la sezione Extensions → Install from VSIX
-- selezionare il file `codereviewbot-0.0.1.vsix`
+1. aprire VS Code 
+2. aprire la sezione `Extensions`
+- premere `Ctrl + Shift + X` oppure 
+- selezionare direttamente nella barra laterale a sinistra 
+3. selezionare l'icona menu **...** in alto a destra 
+4. selezionare `Install from VSIX` 
+5. selezionare il file `codereviewbot-0.0.1.vsix`
 
 Una volta installata, l'estensione sarà disponibile nei comandi di VS Code.
 
@@ -47,10 +51,10 @@ Una volta installata, l'estensione sarà disponibile nei comandi di VS Code.
 ## Utilizzo 
 
 1. aprire un progetto Java in VS Code 
-File → Open folder 
+`File → Open folder`
 
 2. aprire la Command Palette 
-Ctrl + Shift + P
+`Ctrl + Shift + P`
 
 3. scrivere il comando 
 `CodeReviewBot: Open Dashboard`
@@ -75,12 +79,13 @@ CodeReviewBot genera un report dell'analisi in formato
 - PDF
 
 Per modificare il formato da default: 
-- aprire le Settings
-Ctrl + ,	oppure  	File → Preferences → Settings 
-- scrivere `CodeReviewBot` nella barra di ricerca 
-- selezionare PDF al posto di HTML in `CodeReviewBot: Format`
+1. aprire le Settings
+- `Ctrl +`	oppure  	
+- nel menu in alto  sinistra, File → Preferences → Settings 
+2. scrivere `CodeReviewBot` nella barra di ricerca 
+3. selezionare **PDF** al posto di **HTML** in `CodeReviewBot: Format`
 
-I report vengono salvati nella cartella .codereviewbot/ all'interno del progetto analizzato.
+I report vengono salvati nella cartella `.codereviewbot/` all'interno del progetto analizzato.
 
 
 ## Dashboard
