@@ -104,9 +104,13 @@ La dashboard fornisce una visualizzazione riassuntiva dei risultati dell'analisi
 Il repository è organizzato nelle seguenti componenti principali: 
 
 codereviewbot/
+
 ├── src/ → motore di analisi statica (Java)
+
 ├── target/ → file generati dalla compilazione Maven
+
 ├── vscode-codereviewbot/ → estensione Visual Studio Code
+
 └── pom.xml → configurazione del progetto Maven
 
 
