@@ -13,7 +13,7 @@ import it.polastri.codereviewbot.domain.NodoAST;
 
 class RegolaNoTODOTest {
 
-    // La regola deve generare una issue se nel nodo compare "TODO"
+    // La regola deve generare una issue se nel nodo compare TO_DO
     @Test
     void generaIssueSeTodoPresenteNelCommentoDiRiga() {
         RegolaNoTODO regola = new RegolaNoTODO();
@@ -40,7 +40,7 @@ class RegolaNoTODOTest {
         assertEquals(1, regola.applica(nodo, fa).size());
     }
 
-    // La regola non deve generare issue se non c'è "TODO"
+    // La regola non deve generare issue se non c'è TO_DO
     @Test
     void nonGeneraIssueSeTodoAssente() {
         RegolaNoTODO regola = new RegolaNoTODO();

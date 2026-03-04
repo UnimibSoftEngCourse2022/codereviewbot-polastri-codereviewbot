@@ -89,7 +89,7 @@ class AnalisiServiceTest {
         assertEquals(StatoAnalisi.COMPLETATA, analisi.getStatoAnalisi());
         assertNotNull(analisi.getRisultato());
 
-        // 2 issue attese (println + TODO)
+        // 2 issue attese (println + TO_DO)
         assertEquals(2, analisi.getIssues().size());
 
         // 1 file analizzato

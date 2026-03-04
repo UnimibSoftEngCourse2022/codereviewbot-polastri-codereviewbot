@@ -43,7 +43,7 @@ class VisualizzaRevisioneSupportTest {
         List<Issue> issueFileA = analisi.getIssuesPerFilePath("/p/A.java");
         List<Issue> issueFileB = analisi.getIssuesPerFilePath("/p/B.java");
 
-        // A: println + TODO = 2
+        // A: println + TO_DO = 2
         assertEquals(2, issueFileA.size(), "Sul file A.java mi aspetto 2 issue (println + TODO)");
 
         // B: solo println = 1

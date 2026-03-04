@@ -44,4 +44,10 @@ class MainTest {
         int code = Main.run(new String[]{"--project"}, NOOP_LOGGER, DUMMY_LOADER, DUMMY_PARSER);
         assertEquals(2, code);
     }
+    
+    @Test
+    void runSenzaDipendenze_helpRestituisce0_eCopreWiring() {
+        int code = Main.run(new String[]{"--help"});
+        assertEquals(0, code);
+    }
 }

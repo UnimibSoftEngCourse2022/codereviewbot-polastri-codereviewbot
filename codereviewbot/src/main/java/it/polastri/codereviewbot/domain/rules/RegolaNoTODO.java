@@ -13,11 +13,11 @@ import it.polastri.codereviewbot.domain.RegolaAnalisi;
 import it.polastri.codereviewbot.domain.Severita;
 
 /**
- * Regola di analisi che segnala la presenza di "TODO" nei commenti.
+ * Regola di analisi che segnala la presenza di TO_DO nei commenti.
  *
  * Versione raffinata:
- * - segnala TODO solo come parola intera (evita falsi positivi tipo RegolaNoTODO o R_NO_TODO)
- * - considera TODO solo se presente in un commento 
+ * - segnala TO_DO solo come parola intera (evita falsi positivi tipo RegolaNoTODO o R_NO_TODO)
+ * - considera TO_DO solo se presente in un commento 
  */
  
 public class RegolaNoTODO extends RegolaAnalisi {
