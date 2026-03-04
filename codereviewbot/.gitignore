@@ -1,1 +1,13 @@
 /target/
+
+vscode-codereviewbot/node_modules/
+
+.codereviewbot/
+
+.settings/
+
+.classpath
+.project
+
+.DS_Store
+Thumbs.db
