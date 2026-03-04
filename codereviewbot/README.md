@@ -53,9 +53,9 @@ File → Open folder
 Ctrl + Shift + P
 
 3. scrivere il comando 
-CodeReviewBot: Open Dashboard
+`CodeReviewBot: Open Dashboard`
 
-4. nella dashboard, premere Run Analysis 
+4. nella dashboard, premere `Run Analysis`
 
 Al termine dell'analisi, CodeReviewBot mostrerà: 
 - il quality score
@@ -77,8 +77,8 @@ CodeReviewBot genera un report dell'analisi in formato
 Per modificare il formato da default: 
 - aprire le Settings
 Ctrl + ,	oppure  	File → Preferences → Settings 
-- scrivere CodeReviewBot nella barra di ricerca 
-- selezionare PDF al posto di HTML in CodeReviewBot: Format 
+- scrivere `CodeReviewBot` nella barra di ricerca 
+- selezionare PDF al posto di HTML in `CodeReviewBot: Format`
 
 I report vengono salvati nella cartella .codereviewbot/ all'interno del progetto analizzato.
 
