@@ -41,7 +41,7 @@ Installare l'estensione in Visual Studio Code:
 2. aprire la sezione `Extensions`
 - premere `Ctrl + Shift + X` oppure 
 - selezionare direttamente nella barra laterale a sinistra 
-3. selezionare l'icona menu **...** in alto a destra 
+3. selezionare l'icona menu `...` in alto a destra 
 4. selezionare `Install from VSIX` 
 5. selezionare il file `codereviewbot-0.0.1.vsix`
 
@@ -83,7 +83,7 @@ Per modificare il formato da default:
 - `Ctrl +`	oppure  	
 - nel menu in alto  sinistra, File → Preferences → Settings 
 2. scrivere `CodeReviewBot` nella barra di ricerca 
-3. selezionare **PDF** al posto di **HTML** in `CodeReviewBot: Format`
+3. selezionare `PDF` al posto di `HTML` in `CodeReviewBot: Format`
 
 I report vengono salvati nella cartella `.codereviewbot/` all'interno del progetto analizzato.
 
