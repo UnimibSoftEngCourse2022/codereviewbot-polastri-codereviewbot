@@ -34,6 +34,14 @@ Rileva l'uso di `System.out.println`.
 Nelle applicazioni reali è preferibile utilizzare un framework di logging invece di stampare direttamente su console.
 
 
+## Prerequisiti
+
+Per utilizzare CodeReviewBot è necessario avere installato:
+
+- Visual Studio Code
+- Java (JDK 17 o superiore)
+
+
 ## Installazione 
 
 Installare l'estensione in Visual Studio Code: 
