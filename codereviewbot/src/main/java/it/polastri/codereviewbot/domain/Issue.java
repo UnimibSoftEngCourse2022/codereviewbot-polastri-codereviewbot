@@ -41,7 +41,6 @@ public class Issue {
 		return messaggio;
 	}
 	
-	// Sostituisce descrizioneCompleta() del modello di dominio
 	@Override
 	public String toString() {
 	    return "Issue{" +

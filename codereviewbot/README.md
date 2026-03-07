@@ -10,6 +10,20 @@ e fornire un feedback immediato allo sviluppatore tramite:
 L'estensione analizza il codice sorgente di un progetto Java e segnala eventuali violazioni di 
 regole di qualità predefinite.
 
+## Architettura del sistema
+
+Il sistema è composto da due componenti principali:
+
+### motore di analisi (Java)
+- analizza il codice sorgente
+- applica le regole di qualità
+- genera report JSON, HTML o PDF
+
+### estensione Visual Studio Code (TypeScript)
+- esegue l'analisi tramite la CLI
+- visualizza i risultati nella dashboard
+- integra le issue nel pannello Problems
+
 
 ## Funzionalità principali
 
@@ -40,9 +54,24 @@ Per utilizzare CodeReviewBot è necessario avere installato:
 
 - Visual Studio Code
 - Java (JDK 17 o superiore)
-
+- Maven 
 
 ## Installazione 
+
+### 1. Build backend Java 
+
+> Importante: il file `.vsix` **non è autosufficiente**.  
+> Per usare l’estensione è necessario avere anche il backend Java buildato.
+
+Per la build: 
+- scaricare la cartella .zip dal repository di github 
+- estrarre lo zip e salvare in locale 
+- aprire da command prompt la cartella contenente il `pom.xml` `(codereviewbot)` 
+- eseguire il comando `mvn clean package`
+- se la build termina correttamente, nella cartella `target/` viene generato il jar eseguibile
+`codereviewbot-0.0.1-SNAPSHOT.jar`
+
+### 2. Installazione estensione VS Code 
 
 Installare l'estensione in Visual Studio Code: 
 1. aprire VS Code 
@@ -54,6 +83,16 @@ Installare l'estensione in Visual Studio Code:
 5. selezionare il file `codereviewbot-0.0.1.vsix`
 
 Una volta installata, l'estensione sarà disponibile nei comandi di VS Code.
+
+### 3. Configurazione del backend  
+
+L'estensione deve sapere come eseguire il backend Java: 
+1. aprire le settings di VS Code 
+- `Ctrl +`	oppure  	
+- nel menu in alto  sinistra, File → Preferences → Settings
+2. cercare nella barra di ricerca `CodeReviewBot: Cli Command`
+3. impostare come valore il percorso del .jar, ad esempio 
+`java -jar C:\percorso\codereviewbot\target\codereviewbot-0.0.1-SNAPSHOT.jar`
 
 
 ## Utilizzo 
@@ -120,18 +159,3 @@ codereviewbot/
 ├── vscode-codereviewbot/ → estensione Visual Studio Code
 
 └── pom.xml → configurazione del progetto Maven
-
-
-## Architettura del sistema
-
-Il sistema è composto da due componenti principali:
-
-### motore di analisi (Java)
-- analizza il codice sorgente
-- applica le regole di qualità
-- genera report JSON, HTML o PDF
-
-### estensione Visual Studio Code (TypeScript)
-- esegue l'analisi tramite la CLI
-- visualizza i risultati nella dashboard
-- integra le issue nel pannello Problems

@@ -110,7 +110,8 @@ public class FileSystemProjectLoader implements ProjectLoader {
 			return "";
 		return fileName.substring(dot).toLowerCase();
 	}
-
+	
+	// Controlla se il path contiene una directory esclusa, e se lo fa ignora il file. 
 	private boolean isExcluded(Path path) {
 		String normalized = "/" + path.toString().replace("\\", "/") + "/";
 		return EXCLUDED_DIRS.stream().anyMatch(normalized::contains);

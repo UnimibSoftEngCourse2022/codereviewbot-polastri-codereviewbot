@@ -1,15 +1,14 @@
 {
-  "reportId": "REP-AN-82adb761-f075-4e1b-ad0c-923bae4e0ca4",
-  "generatedAt": "2026-03-03T22:19:40.683662900",
+  "reportId": "REP-AN-d6c6d7c0-f5f4-4e46-844b-99c09e8403aa",
+  "generatedAt": "2026-03-05T16:40:05.962107",
   "format": "JSON",
-  "qualityScore": 84,
+  "qualityScore": 90,
   "analysis": {
-    "analysisId": "AN-82adb761-f075-4e1b-ad0c-923bae4e0ca4",
+    "analysisId": "AN-d6c6d7c0-f5f4-4e46-844b-99c09e8403aa",
     "projectPath": "c:\\Users\\Laura\\OneDrive\\Desktop\\Progettino IS\\codereviewbot"
   },
   "classification": [
-    {"category": "BEST_PRACTICE", "severity": "WARNING", "count": 5},
-    {"category": "STILE", "severity": "WARNING", "count": 3}
+    {"category": "BEST_PRACTICE", "severity": "WARNING", "count": 5}
   ],
   "issues": [
     {
@@ -43,30 +42,6 @@
       "category": "BEST_PRACTICE",
       "severity": "WARNING",
       "message": "Uso di System.out.println rilevato: usare un logger."
-    },
-    {
-      "file": "c:\\Users\\Laura\\OneDrive\\Desktop\\Progettino IS\\codereviewbot\\src\\main\\java\\it\\polastri\\codereviewbot\\domain\\rules\\RegolaNoTODO.java",
-      "line": 16,
-      "ruleId": "R_NO_TODO",
-      "category": "STILE",
-      "severity": "WARNING",
-      "message": "Presente TODO nel commento: rimuovere o risolvere il TODO."
-    },
-    {
-      "file": "c:\\Users\\Laura\\OneDrive\\Desktop\\Progettino IS\\codereviewbot\\src\\main\\java\\it\\polastri\\codereviewbot\\domain\\rules\\RegolaNoTODO.java",
-      "line": 19,
-      "ruleId": "R_NO_TODO",
-      "category": "STILE",
-      "severity": "WARNING",
-      "message": "Presente TODO nel commento: rimuovere o risolvere il TODO."
-    },
-    {
-      "file": "c:\\Users\\Laura\\OneDrive\\Desktop\\Progettino IS\\codereviewbot\\src\\main\\java\\it\\polastri\\codereviewbot\\domain\\rules\\RegolaNoTODO.java",
-      "line": 20,
-      "ruleId": "R_NO_TODO",
-      "category": "STILE",
-      "severity": "WARNING",
-      "message": "Presente TODO nel commento: rimuovere o risolvere il TODO."
     },
     {
       "file": "c:\\Users\\Laura\\OneDrive\\Desktop\\Progettino IS\\codereviewbot\\src\\main\\java\\it\\polastri\\codereviewbot\\infrastructure\\logger\\ConsoleLogger.java",
