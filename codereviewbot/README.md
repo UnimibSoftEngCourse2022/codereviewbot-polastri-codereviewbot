@@ -51,6 +51,7 @@ Nelle applicazioni reali è preferibile utilizzare un framework di logging invec
 ## Prerequisiti
 
 > L’estensione VS Code funge da interfaccia grafica del motore di analisi Java, che viene eseguito tramite CLI.
+
 Per utilizzare CodeReviewBot è necessario avere installato:
 
 - Visual Studio Code
