@@ -1,0 +1,79 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [3 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 4 0 R >> >> /Contents 5 0 R >> >>
+endobj
+4 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+5 0 obj
+<< /Length 2717 >>
+stream
+BT
+/F1 11 Tf
+50 780 Td
+(CodeReviewBot - Report Qualità) Tj
+0 -14 Td
+(Report ID: REP-AN-fe45aa25-49f2-4ed4-bf4f-1337a8f04d6b) Tj
+0 -14 Td
+(Generato il: 2026-03-03T22:12:08.121092) Tj
+0 -14 Td
+(Formato: PDF) Tj
+0 -14 Td
+(Quality Score: 84/100) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+(Analisi ID: AN-fe45aa25-49f2-4ed4-bf4f-1337a8f04d6b) Tj
+0 -14 Td
+(Progetto: c:\\Users\\Laura\\OneDrive\\Desktop\\Progettino IS\\codereviewbot) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+(Classificazione Issue:) Tj
+0 -14 Td
+( - STILE / WARNING = 3) Tj
+0 -14 Td
+( - BEST_PRACTICE / WARNING = 5) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+(Dettaglio Issue:) Tj
+0 -14 Td
+( - c:\\Users\\Laura\\OneDrive\\Desktop\\Progettino IS\\codereviewbot\\src\\main\\java\\it\\polastri\\codereviewbot\\domain\\rules\\RegolaNoSystemOutPrintln.java:15 [R_NO_SYSOUT | BEST_PRACTICE | WARNING] Uso di System.out.println rilevato: usare un logger.) Tj
+0 -14 Td
+( - c:\\Users\\Laura\\OneDrive\\Desktop\\Progettino IS\\codereviewbot\\src\\main\\java\\it\\polastri\\codereviewbot\\domain\\rules\\RegolaNoSystemOutPrintln.java:24 [R_NO_SYSOUT | BEST_PRACTICE | WARNING] Uso di System.out.println rilevato: usare un logger.) Tj
+0 -14 Td
+( - c:\\Users\\Laura\\OneDrive\\Desktop\\Progettino IS\\codereviewbot\\src\\main\\java\\it\\polastri\\codereviewbot\\domain\\rules\\RegolaNoSystemOutPrintln.java:39 [R_NO_SYSOUT | BEST_PRACTICE | WARNING] Uso di System.out.println rilevato: usare un logger.) Tj
+0 -14 Td
+( - c:\\Users\\Laura\\OneDrive\\Desktop\\Progettino IS\\codereviewbot\\src\\main\\java\\it\\polastri\\codereviewbot\\domain\\rules\\RegolaNoSystemOutPrintln.java:41 [R_NO_SYSOUT | BEST_PRACTICE | WARNING] Uso di System.out.println rilevato: usare un logger.) Tj
+0 -14 Td
+( - c:\\Users\\Laura\\OneDrive\\Desktop\\Progettino IS\\codereviewbot\\src\\main\\java\\it\\polastri\\codereviewbot\\domain\\rules\\RegolaNoTODO.java:16 [R_NO_TODO | STILE | WARNING] Presente TODO nel commento: rimuovere o risolvere il TODO.) Tj
+0 -14 Td
+( - c:\\Users\\Laura\\OneDrive\\Desktop\\Progettino IS\\codereviewbot\\src\\main\\java\\it\\polastri\\codereviewbot\\domain\\rules\\RegolaNoTODO.java:19 [R_NO_TODO | STILE | WARNING] Presente TODO nel commento: rimuovere o risolvere il TODO.) Tj
+0 -14 Td
+( - c:\\Users\\Laura\\OneDrive\\Desktop\\Progettino IS\\codereviewbot\\src\\main\\java\\it\\polastri\\codereviewbot\\domain\\rules\\RegolaNoTODO.java:20 [R_NO_TODO | STILE | WARNING] Presente TODO nel commento: rimuovere o risolvere il TODO.) Tj
+0 -14 Td
+( - c:\\Users\\Laura\\OneDrive\\Desktop\\Progettino IS\\codereviewbot\\src\\main\\java\\it\\polastri\\codereviewbot\\infrastructure\\logger\\ConsoleLogger.java:24 [R_NO_SYSOUT | BEST_PRACTICE | WARNING] Uso di System.out.println rilevato: usare un logger.) Tj
+ET
+
+endstream
+endobj
+xref
+0 6
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000115 00000 n 
+0000000244 00000 n 
+0000000314 00000 n 
+trailer
+<< /Size 6 /Root 1 0 R >>
+startxref
+3083
+%%EOF

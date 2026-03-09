@@ -1,0 +1,55 @@
+{
+  "reportId": "REP-AN-d6c6d7c0-f5f4-4e46-844b-99c09e8403aa",
+  "generatedAt": "2026-03-05T16:40:05.962107",
+  "format": "JSON",
+  "qualityScore": 90,
+  "analysis": {
+    "analysisId": "AN-d6c6d7c0-f5f4-4e46-844b-99c09e8403aa",
+    "projectPath": "c:\\Users\\Laura\\OneDrive\\Desktop\\Progettino IS\\codereviewbot"
+  },
+  "classification": [
+    {"category": "BEST_PRACTICE", "severity": "WARNING", "count": 5}
+  ],
+  "issues": [
+    {
+      "file": "c:\\Users\\Laura\\OneDrive\\Desktop\\Progettino IS\\codereviewbot\\src\\main\\java\\it\\polastri\\codereviewbot\\domain\\rules\\RegolaNoSystemOutPrintln.java",
+      "line": 15,
+      "ruleId": "R_NO_SYSOUT",
+      "category": "BEST_PRACTICE",
+      "severity": "WARNING",
+      "message": "Uso di System.out.println rilevato: usare un logger."
+    },
+    {
+      "file": "c:\\Users\\Laura\\OneDrive\\Desktop\\Progettino IS\\codereviewbot\\src\\main\\java\\it\\polastri\\codereviewbot\\domain\\rules\\RegolaNoSystemOutPrintln.java",
+      "line": 24,
+      "ruleId": "R_NO_SYSOUT",
+      "category": "BEST_PRACTICE",
+      "severity": "WARNING",
+      "message": "Uso di System.out.println rilevato: usare un logger."
+    },
+    {
+      "file": "c:\\Users\\Laura\\OneDrive\\Desktop\\Progettino IS\\codereviewbot\\src\\main\\java\\it\\polastri\\codereviewbot\\domain\\rules\\RegolaNoSystemOutPrintln.java",
+      "line": 39,
+      "ruleId": "R_NO_SYSOUT",
+      "category": "BEST_PRACTICE",
+      "severity": "WARNING",
+      "message": "Uso di System.out.println rilevato: usare un logger."
+    },
+    {
+      "file": "c:\\Users\\Laura\\OneDrive\\Desktop\\Progettino IS\\codereviewbot\\src\\main\\java\\it\\polastri\\codereviewbot\\domain\\rules\\RegolaNoSystemOutPrintln.java",
+      "line": 41,
+      "ruleId": "R_NO_SYSOUT",
+      "category": "BEST_PRACTICE",
+      "severity": "WARNING",
+      "message": "Uso di System.out.println rilevato: usare un logger."
+    },
+    {
+      "file": "c:\\Users\\Laura\\OneDrive\\Desktop\\Progettino IS\\codereviewbot\\src\\main\\java\\it\\polastri\\codereviewbot\\infrastructure\\logger\\ConsoleLogger.java",
+      "line": 24,
+      "ruleId": "R_NO_SYSOUT",
+      "category": "BEST_PRACTICE",
+      "severity": "WARNING",
+      "message": "Uso di System.out.println rilevato: usare un logger."
+    }
+  ]
+}

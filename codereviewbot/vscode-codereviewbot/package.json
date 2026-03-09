@@ -1,0 +1,58 @@
+{
+  "name": "codereviewbot",
+  "displayName": "CodeReviewBot",
+  "publisher": "local",
+  "version": "0.0.1",
+  "engines": { "vscode": "^1.85.0" },
+
+  "activationEvents": [
+    "onCommand:codereviewbot.runAnalysis",
+    "onCommand:codereviewbot.openDashboard"
+  ],
+
+  "main": "./dist/extension.js",
+
+  "contributes": {
+    "commands": [
+      { "command": "codereviewbot.runAnalysis", "title": "CodeReviewBot: Run Analysis" },
+      { "command": "codereviewbot.openDashboard", "title": "CodeReviewBot: Open Dashboard" }
+    ],
+    "configuration": {
+      "title": "CodeReviewBot",
+      "properties": {
+        "codereviewbot.cliCommand": {
+          "type": "string",
+          "default": "",
+          "description": "Comando completo per eseguire la CLI. Se vuoto, l'estensione prova ad auto-detectare il .jar in target/."
+        },
+        "codereviewbot.format": {
+          "type": "string",
+          "enum": ["JSON", "HTML", "PDF"],
+          "default": "HTML",
+          "description": "Formato report 'umano' da generare (il JSON viene usato per le diagnostics)."
+        },
+        "codereviewbot.outputDir": {
+          "type": "string",
+          "default": ".codereviewbot",
+          "description": "Directory (relativa al workspace) dove salvare i report."
+        },
+        "codereviewbot.openGeneratedReport": {
+          "type": "boolean",
+          "default": true,
+          "description": "Se true, apre il report HTML/PDF generato."
+        }
+      }
+    }
+  },
+
+  "scripts": {
+    "compile": "tsc -p .",
+    "watch": "tsc -watch -p ."
+  },
+
+  "devDependencies": {
+    "typescript": "^5.3.3",
+    "@types/node": "^20.10.5",
+    "@types/vscode": "^1.85.0"
+  }
+}

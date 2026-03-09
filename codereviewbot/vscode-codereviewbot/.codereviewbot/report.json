@@ -1,0 +1,16 @@
+{
+  "reportId": "REP-AN-52c79ccb-ccfe-44b9-a76e-9013b78e8db8",
+  "generatedAt": "2026-03-04T22:48:14.579956200",
+  "format": "JSON",
+  "qualityScore": 100,
+  "analysis": {
+    "analysisId": "AN-52c79ccb-ccfe-44b9-a76e-9013b78e8db8",
+    "projectPath": "c:\\Users\\Laura\\OneDrive\\Desktop\\Progettino IS\\codereviewbot\\vscode-codereviewbot"
+  },
+  "classification": [
+
+  ],
+  "issues": [
+
+  ]
+}
