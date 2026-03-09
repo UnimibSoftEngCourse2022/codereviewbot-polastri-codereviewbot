@@ -81,7 +81,8 @@ class ReportServiceTest {
                 logger
         );
 
-        Analisi analisi = new Analisi("A1", new Progetto("/p")); // stato CREATA
+        // stato CREATA
+        Analisi analisi = new Analisi("A1", new Progetto("/p")); 
         String outPath = "/out.json";
 
         Executable action = () -> service.generaReportQualita(analisi, ReportFormat.JSON, outPath);
@@ -237,7 +238,7 @@ class ReportServiceTest {
                 "Il log di errore deve contenere il messaggio previsto");
     }
 
-    // ---------------- Helpers per Analisi ----------------
+    // Helpers per Analisi 
 
     // Crea un'analisi COMPLETATA senza issue.
     private Analisi creaAnalisiCompletataSenzaIssue() {

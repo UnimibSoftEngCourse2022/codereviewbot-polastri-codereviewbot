@@ -40,7 +40,7 @@ class LoggerTest {
      * e concatenare correttamente il messaggio dell'eccezione.
      */
     @Test
-    void error_conEccezione_inoltraLivelloERiportaMessaggioEccezione() {
+    void errorConEccezioneInoltraLivelloERiportaMessaggioEccezione() {
 
         class TestLogger implements Logger {
             LogLevel lastLevel;

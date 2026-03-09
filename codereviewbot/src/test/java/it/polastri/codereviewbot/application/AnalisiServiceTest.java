@@ -73,7 +73,7 @@ class AnalisiServiceTest {
         progetto.aggiungiFileSorgente(a);
 
         ProjectLoader loaderFinto = path -> progetto;
-        Parser parser = new StubParser(); // non restituisce null
+        Parser parser = new StubParser(); 
 
         SpyLogger logger = new SpyLogger();
 

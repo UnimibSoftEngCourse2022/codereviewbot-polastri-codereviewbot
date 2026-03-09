@@ -199,12 +199,12 @@ class FileSystemProjectLoaderTest {
             );
             Files.setPosixFilePermissions(root, noTraverse);
 
-            // ✅ Se l'ambiente NON rende davvero la directory inaccessibile, skippiamo il test
+            // Se l'ambiente non rende davvero la directory inaccessibile, skippiamo il test
             try {
                 Files.newDirectoryStream(root).iterator().hasNext();
                 Assumptions.abort("Permessi POSIX non applicati/effettivi su questo ambiente: test skip.");
             } catch (Exception expected) {
-                // ok: directory effettivamente inaccessibile, il test ha senso
+                // ok: directory effettivamente inaccessibile
             }
 
             FileSystemProjectLoader loader = new FileSystemProjectLoader();

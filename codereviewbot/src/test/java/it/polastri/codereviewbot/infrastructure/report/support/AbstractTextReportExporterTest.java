@@ -109,7 +109,7 @@ class AbstractTextReportExporterTest {
         assertTrue(out.contains("\\n"));
     }
 
-    // ---- builders ----
+    // Builders
     private Report creaReportSenzaIssue() {
         Linguaggio java = new Linguaggio("Java", List.of(".java"));
         FileSorgente file = new FileSorgente("A.java", "/p/A.java", java, "class A {}");

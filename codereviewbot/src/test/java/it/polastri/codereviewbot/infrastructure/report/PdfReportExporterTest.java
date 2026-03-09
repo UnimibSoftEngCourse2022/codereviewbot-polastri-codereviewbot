@@ -77,7 +77,7 @@ class PdfReportExporterTest {
 
         Path dir = tempDir.resolve("outDir");
         Files.createDirectories(dir);
-        String dirPath = dir.toString(); // scrivere su directory -> errore IO
+        String dirPath = dir.toString(); 
 
         Executable action = () -> exporter.esporta(report, dirPath);
         ReportExportException ex = assertThrows(ReportExportException.class, action);
@@ -121,7 +121,7 @@ class PdfReportExporterTest {
         assertTrue(header.startsWith(PDF_SIGNATURE));
     }
 
-    // ---- Builder di un report minimo valido ----
+    // Builder di un report minimo valido 
 
     private Report creaReportConUnaIssue() {
         Linguaggio java = new Linguaggio("Java", List.of(".java"));

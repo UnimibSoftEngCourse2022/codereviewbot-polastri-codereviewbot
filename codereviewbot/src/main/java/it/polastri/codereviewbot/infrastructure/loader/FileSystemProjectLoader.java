@@ -14,10 +14,12 @@ import java.util.Objects;
 import java.util.Set;
 
 /**
- * Implementazione di ProjectLoader che carica un progetto dal filesystem
- * locale: - valida il percorso del progetto - scansiona ricorsivamente la
- * directory - include solo file con estensione supportata - legge contenuto
- * file sorgente - costruisce l'oggetto Progetto con i relativi FileSorgente
+ * Implementazione di ProjectLoader che carica un progetto dal filesystem locale: 
+ * - valida il percorso del progetto 
+ * - scansiona ricorsivamente la directory 
+ * - include solo file con estensione supportata 
+ * - legge il contenuto del file sorgente 
+ * - costruisce l'oggetto Progetto con i relativi FileSorgente
  */
 
 public class FileSystemProjectLoader implements ProjectLoader {
@@ -27,8 +29,7 @@ public class FileSystemProjectLoader implements ProjectLoader {
 	private static final Set<String> EXCLUDED_DIRS = Set.of("/target/", "/.git/", "/src/test/",
 			"/vscode-codereviewbot/", "/node_modules/");
 
-	// Lista dei linguaggi supportati dal sistema. Filtra i file durante la
-	// scansione.
+	// Lista dei linguaggi supportati dal sistema. Filtra i file durante la scansione.
 	public FileSystemProjectLoader() {
 		this(List.of(new Linguaggio("Java", List.of(".java")), new Linguaggio("Python", List.of(".py")),
 				new Linguaggio("C++", List.of(".cpp", ".cc", ".cxx", ".hpp", ".h"))));
